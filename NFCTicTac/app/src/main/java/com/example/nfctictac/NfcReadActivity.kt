@@ -16,6 +16,8 @@ class NfcReadActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.nfc_read_activity)
+
+
        // this.nfcAdapter = NfcAdapter.getDefaultAdapter(this)?.let { it }
 
     }
