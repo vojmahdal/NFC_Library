@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 <uses-permission android:name="android.permission.NFC"/>
+<uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -36,27 +38,19 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+
+
         <activity
             android:name=".NfcReadActivity"
-            android:launchMode="singleTask"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
-
                 <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.nfc.action.TAG_DISCOVERED" />
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
 
                 <data android:mimeType="text/plain"/>
-            </intent-filter>
-
-
-
-
-            <intent-filter>
-                <action android:name="android.nfc.action.TAG_DISCOVERED"/>
-            </intent-filter>
-
-            <intent-filter>
-                <action android:name="android.nfc.action.TECH-DISCOVERED"/>
             </intent-filter>
 
             <meta-data

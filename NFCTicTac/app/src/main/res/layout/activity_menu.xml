@@ -35,7 +35,15 @@
             android:layout_height="60dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="36dp"
-            android:text="nfc_read"
+            android:text="Write NFC chips"
+            android:textColor="@color/black"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/nfc_button_read"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="36dp"
+            android:text="Read NFC debug"
             android:textColor="@color/black"/>
         <com.google.android.material.button.MaterialButton
             android:id="@+id/settings_button"

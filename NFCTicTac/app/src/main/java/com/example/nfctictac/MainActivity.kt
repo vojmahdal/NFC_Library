@@ -1,6 +1,8 @@
 package com.example.nfctictac
 
 import android.content.Intent
+import android.nfc.NdefMessage
+import android.nfc.NfcAdapter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -10,6 +12,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var actualBtn: Button
     var player = 0
     var count = 0
+
+    var NFCA: String = ""
+    var NFCB: String = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun play(actualBtn: Button){
+     private fun play(actualBtn: Button){
         actualBtn.setOnClickListener {
         if(actualBtn.text == ""){
             if (player == 0){
@@ -77,6 +82,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    override fun onNewIntent(intent: Intent){
+        super.onNewIntent(intent)
+
+        if(NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action){
+            intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)?.also { rawMessages ->
+                val messages: List<NdefMessage> = rawMessages.map { it as NdefMessage }
+            }
+        }
     }
 
 }
