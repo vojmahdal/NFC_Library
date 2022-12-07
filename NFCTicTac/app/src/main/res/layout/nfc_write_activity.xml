@@ -21,22 +21,15 @@
             android:layout_marginBottom="32dp"
             />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnWrite"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="36dp"
-            android:text="Write NFC1"
-            android:textColor="@color/black"/>
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/nfc_button"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="36dp"
-            android:text="write NFC2"
-            android:textColor="@color/black"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="Přiřaďte čip pro prvního hráče"
+           android:id="@+id/textNfc"
+            android:textSize="16sp"/>
+
+
 
 
 

@@ -12,6 +12,7 @@ import android.nfc.tech.Ndef
 import android.nfc.tech.NfcF
 import android.os.Bundle
 import android.provider.Settings
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
@@ -23,7 +24,8 @@ class NfcWriteActivity : AppCompatActivity() {
     }
     private var pendingIntent: PendingIntent? = null
 
-
+    private var setPlayer = 0
+    private lateinit var textView : TextView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +33,7 @@ class NfcWriteActivity : AppCompatActivity() {
         supportActionBar?.hide()
         setContentView(R.layout.nfc_write_activity)
       //  this.nfcAdapter = NfcAdapter.getDefaultAdapter(this)?.let { it }
+        textView = findViewById(R.id.textNfc)
 
         pendingIntent = PendingIntent.getActivity(this, 0,
             Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
@@ -56,7 +59,7 @@ class NfcWriteActivity : AppCompatActivity() {
             builder.setPositiveButton("settings"){
                 _, _ -> startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
             }
-            builder.setNegativeButton("cancell", null)
+            builder.setNegativeButton("cancel", null)
             val myDialog = builder.create()
             myDialog.setCanceledOnTouchOutside(false)
             myDialog.show()
@@ -70,9 +73,12 @@ class NfcWriteActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-      //  Toast.makeText(applicationContext, "successfully connected", Toast.LENGTH_SHORT).show()
         try {
-            val nfctext = "nfc_tag_black"
+            var nfctext = "nfc_tag_blue"
+            if(setPlayer == 1){
+                nfctext = "nfc_tag_black"
+            }
+
 
             if (NfcAdapter.ACTION_TECH_DISCOVERED == intent.action
                 || NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action){
@@ -90,9 +96,15 @@ class NfcWriteActivity : AppCompatActivity() {
                     ndef.writeNdefMessage(message)
                     ndef.close()
 
-                    Toast.makeText(applicationContext, "successfully written", Toast.LENGTH_SHORT).show()
+
+                    textView.text = "Přiřaďte čip pro druhého hráče"
+                    setPlayer++
+                    if (setPlayer == 2){
+                        Toast.makeText(applicationContext, "Přiřazení hráčů úspěšné", Toast.LENGTH_SHORT).show()
+                        onBackPressed()
+                    }
                 }else{
-                    Toast.makeText(applicationContext, "is not writable", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "čip neumožňuje zapisování", Toast.LENGTH_SHORT).show()
                 }
             }
         }catch (ex: Exception){

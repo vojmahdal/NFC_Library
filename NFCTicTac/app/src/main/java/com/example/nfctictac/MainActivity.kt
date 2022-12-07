@@ -112,7 +112,10 @@ class MainActivity : AppCompatActivity() {
      private fun play(actualBtn: Button){
         actualBtn.setOnClickListener {
         if(actualBtn.text == ""){
-            if (player == 0  && nfcText =="nfc_tag_blue"){
+            if(nfcText == ""){
+                Toast.makeText(applicationContext, "První hráč musí přiřadit svůj čip", Toast.LENGTH_SHORT).show()
+            }
+            else if (player == 0  && nfcText =="nfc_tag_blue"){
                 actualBtn.text = "X"
                 player = 1
                 count++
@@ -137,15 +140,6 @@ class MainActivity : AppCompatActivity() {
 
 
     fun check(){
-      /*  if(actualBtn.text == "" && nfcText =="nfc_tag_blue"){
-            if (player == 0){
-                actualBtn.text = "X"
-                player = 1
-            }else{
-                actualBtn.text = "O"
-                player = 0
-            }
-        }*/
         //1st row
         if(f1.text == "O" && f2.text == "0" && f3.text == "0"){
         val intent = Intent(this, MenuActivity::class.java)
