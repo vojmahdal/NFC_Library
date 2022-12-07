@@ -5,13 +5,17 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
 import android.nfc.NdefMessage
+import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
 import android.nfc.Tag
+import android.nfc.tech.Ndef
 import android.nfc.tech.NfcA
 import android.nfc.tech.NfcF
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.provider.Settings
 import android.util.Log
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
@@ -24,27 +28,62 @@ class NfcReadActivity : AppCompatActivity() {
     private var intentFilterArray: Array<IntentFilter>? = null
     private val techListArray = arrayOf(arrayOf(NfcF::class.java.name))
     private var pendingIntent: PendingIntent? = null
+    private lateinit var textView : TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.nfc_read_activity)
 
+        textView = findViewById(R.id.txtviewmachineid)
 
-        // this.nfcAdapter = NfcAdapter.getDefaultAdapter(this)?.let { it }
+        pendingIntent = PendingIntent.getActivity(this, 0,
+            Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
+        val ndef = IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED)
+try {
 
-        /*  try{
+
+    try {
+        ndef.addDataType("text/plain")
+    } catch (e: IntentFilter.MalformedMimeTypeException) {
+        throw RuntimeException("fail", e)
+    }
+    intentFilterArray = arrayOf(ndef)
+
+
+    if (nfcAdapter == null) {
+        val builder = AlertDialog.Builder(this@NfcReadActivity, R.style.Theme_NFCTicTac)
+        builder.setMessage("Does not support NFC")
+        builder.setPositiveButton("cancel", null)
+        val myDialog = builder.create()
+        myDialog.setCanceledOnTouchOutside(false)
+        myDialog.show()
+    } else if (!nfcAdapter!!.isEnabled) {
+        val builder = AlertDialog.Builder(this@NfcReadActivity, R.style.Theme_NFCTicTac)
+        builder.setTitle("NFC disabled")
+        builder.setMessage("enable NFC")
+        builder.setPositiveButton("settings") { _, _ ->
+            startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
+        }
+        builder.setNegativeButton("cancel", null)
+        val myDialog = builder.create()
+        myDialog.setCanceledOnTouchOutside(false)
+        myDialog.show()
+    }
+    /*if (!nfcAdapter!!.isEnabled){
+            val builder = AlertDialog
+        }*/
+
+    // this.nfcAdapter = NfcAdapter.getDefaultAdapter(this)?.let { it }
+
+    /*  try{
 
             //nfcread
             pendingIntent = PendingIntent.getActivity(
                 this, 0, Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0
             )
             val ndef = IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED)
-            try {
-                ndef.addDataType("text/plain")
-            } catch (e: IntentFilter.MalformedMimeTypeException){
-                throw RuntimeException("fail", e)
-            }
+
             intentFilterArray = arrayOf(ndef)
             if(!nfcAdapter!!.isEnabled){
                 val builder = AlertDialog.Builder(this@NfcReadActivity, R.style.M)
@@ -54,6 +93,9 @@ class NfcReadActivity : AppCompatActivity() {
             Toast.makeText(applicationContext, ex.message, Toast.LENGTH_SHORT).show()
         }
 */
+}catch (e: Exception){
+    Toast.makeText(applicationContext, e.message, Toast.LENGTH_SHORT).show()
+}
     }
         override fun onResume(){
             super.onResume()
@@ -78,12 +120,57 @@ class NfcReadActivity : AppCompatActivity() {
                   val inNdefMessage = this?.get(0) as NdefMessage
                   val inNdefRecord = inNdefMessage.records
 
-                  //var inMessage = String()
+                  var ndefRecord_0 = inNdefRecord[0]
+                  var inMessage = String(ndefRecord_0.payload)
+                  machineId = inMessage.drop(3)
+
+                  textView.text = "Machine ID ${machineId}"
+                  if(!textView.text.toString().equals("")){
+                      if(NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action
+                          || NfcAdapter.ACTION_TECH_DISCOVERED == intent.action){
+                          val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG) ?: return
+                          val ndef = Ndef.get(tag) ?: return
+
+                          if(ndef.isWritable) {
+                              var message = NdefMessage(
+                                  arrayOf(
+                                      NdefRecord.createTextRecord("en", machineId)
+                                  )
+                              )
+
+                              ndef.connect()
+                              ndef.writeNdefMessage(message)
+                              ndef.close()
+                              Toast.makeText(
+                                  applicationContext,
+                                  "success",
+                                  Toast.LENGTH_SHORT
+                              ).show()
+
+                          }else{
+                              try {
+                                  ndefRecord_0 = inNdefRecord[2]
+                                  inMessage = String(ndefRecord_0.payload)
+
+                              }catch (e: Exception){
+                                  Toast.makeText(applicationContext, "user id not written", Toast.LENGTH_SHORT).show()
+                              }
+                          }
+                      }
+                  }
               }catch (ex: Exception){
                   Toast.makeText(applicationContext, "no data found", Toast.LENGTH_SHORT).show()
               }
           }
       }
+
+    }
+
+    override fun onPause() {
+        if(this.isFinishing){
+            nfcAdapter?.disableForegroundDispatch(this)
+        }
+        super.onPause()
 
     }
 
