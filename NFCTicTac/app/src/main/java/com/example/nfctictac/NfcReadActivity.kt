@@ -1,23 +1,15 @@
 package com.example.nfctictac
 
-import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
-import android.nfc.NdefMessage
-import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
-import android.nfc.Tag
-import android.nfc.tech.Ndef
-import android.nfc.tech.NfcA
 import android.nfc.tech.NfcF
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.provider.Settings
-import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.easynfc.EzNfc
 
 class NfcReadActivity : AppCompatActivity() {
 
@@ -39,6 +31,8 @@ class NfcReadActivity : AppCompatActivity() {
 
         pendingIntent = PendingIntent.getActivity(this, 0,
             Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
+      //  val ndef = IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED)
+     //  NfcRead().create(this, nfcAdapter, ndef)
         val ndef = IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED)
 try {
 
@@ -50,7 +44,8 @@ try {
     }
     intentFilterArray = arrayOf(ndef)
 
-
+    EzNfc().support(this, nfcAdapter)
+/*
     if (nfcAdapter == null) {
         val builder = AlertDialog.Builder(this@NfcReadActivity, R.style.Theme_NFCTicTac)
         builder.setMessage("Does not support NFC")
@@ -69,30 +64,7 @@ try {
         val myDialog = builder.create()
         myDialog.setCanceledOnTouchOutside(false)
         myDialog.show()
-    }
-    /*if (!nfcAdapter!!.isEnabled){
-            val builder = AlertDialog
-        }*/
-
-    // this.nfcAdapter = NfcAdapter.getDefaultAdapter(this)?.let { it }
-
-    /*  try{
-
-            //nfcread
-            pendingIntent = PendingIntent.getActivity(
-                this, 0, Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0
-            )
-            val ndef = IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED)
-
-            intentFilterArray = arrayOf(ndef)
-            if(!nfcAdapter!!.isEnabled){
-                val builder = AlertDialog.Builder(this@NfcReadActivity, R.style.M)
-            }
-
-        } catch (ex:Exception){
-            Toast.makeText(applicationContext, ex.message, Toast.LENGTH_SHORT).show()
-        }
-*/
+    }*/
 }catch (e: Exception){
     Toast.makeText(applicationContext, e.message, Toast.LENGTH_SHORT).show()
 }
@@ -112,6 +84,9 @@ try {
     override fun onNewIntent(intent: Intent){
         super.onNewIntent(intent)
 
+        EzNfc().read(intent, applicationContext, textView)
+
+        /*
         val action = intent.action
       if(NfcAdapter.ACTION_NDEF_DISCOVERED == action){
           val parcelables = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
@@ -162,7 +137,7 @@ try {
                   Toast.makeText(applicationContext, "no data found", Toast.LENGTH_SHORT).show()
               }
           }
-      }
+      }*/
 
     }
 
@@ -174,7 +149,7 @@ try {
 
     }
 
-    private fun enableForegroundDispatch(activity: AppCompatActivity, adapter: NfcAdapter?) {
+   /* private fun enableForegroundDispatch(activity: AppCompatActivity, adapter: NfcAdapter?) {
 
         val intent = Intent(activity.applicationContext, activity.javaClass)
         intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -196,5 +171,5 @@ try {
         }
 
         adapter?.enableForegroundDispatch(activity, pendingIntent, filters, techList)
-    }
+    }*/
 }

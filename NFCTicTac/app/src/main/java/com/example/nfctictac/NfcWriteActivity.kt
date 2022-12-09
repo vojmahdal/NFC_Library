@@ -15,6 +15,7 @@ import android.provider.Settings
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.easynfc.EzNfc
 
 class NfcWriteActivity : AppCompatActivity() {
     private var intentFilterArray: Array<IntentFilter>? = null
@@ -24,7 +25,10 @@ class NfcWriteActivity : AppCompatActivity() {
     }
     private var pendingIntent: PendingIntent? = null
 
-    private var setPlayer = 0
+    private var countPlayer = 0
+    private val firstMessage = "nfc_tag_blue"
+    private val secondMessage = "nfc_tag_black"
+
     private lateinit var textView : TextView
 
 
@@ -73,42 +77,19 @@ class NfcWriteActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        try {
-            var nfctext = "nfc_tag_blue"
-            if(setPlayer == 1){
-                nfctext = "nfc_tag_black"
-            }
+        writeNFC(intent)
+    }
 
 
-            if (NfcAdapter.ACTION_TECH_DISCOVERED == intent.action
-                || NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action){
-                val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG) ?: return
-                val ndef = Ndef.get(tag) ?: return
-
-                if(ndef.isWritable){
-                    var message = NdefMessage(
-                        arrayOf(
-                            NdefRecord.createTextRecord("en", nfctext)
-                        )
-                    )
-                    ndef.connect()
-
-                    ndef.writeNdefMessage(message)
-                    ndef.close()
-
-
-                    textView.text = "Přiřaďte čip pro druhého hráče"
-                    setPlayer++
-                    if (setPlayer == 2){
-                        Toast.makeText(applicationContext, "Přiřazení hráčů úspěšné", Toast.LENGTH_SHORT).show()
-                        onBackPressed()
-                    }
-                }else{
-                    Toast.makeText(applicationContext, "čip neumožňuje zapisování", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }catch (ex: Exception){
-            Toast.makeText(applicationContext, ex.message, Toast.LENGTH_SHORT).show()
+    private fun writeNFC(intent: Intent){
+        if(countPlayer % 2 == 0){
+            EzNfc().write(intent, this, firstMessage)
+            textView.text = "Přiřaďte čip druhého hráče"
+            countPlayer++
+        }else{
+            EzNfc().write(intent, this, secondMessage)
+            textView.text = "Přiřaďte čip prvního hráče"
+            countPlayer++
         }
     }
 

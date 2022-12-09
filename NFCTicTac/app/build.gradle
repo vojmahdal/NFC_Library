@@ -65,4 +65,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    //my own nfc kotlin library
+    implementation project(path: ':easyNfc')
 }
