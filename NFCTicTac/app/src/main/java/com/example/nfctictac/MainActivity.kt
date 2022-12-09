@@ -16,6 +16,7 @@ import android.provider.Settings
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import com.example.easynfc.EzNfc
 
 class MainActivity : AppCompatActivity() {
     private lateinit var actualBtn: Button
@@ -227,8 +228,10 @@ class MainActivity : AppCompatActivity() {
     var nfcTagText = ""
     override fun onNewIntent(intent: Intent){
         super.onNewIntent(intent)
+//TODO zmenit nfc textview v read modulu
+       // EzNfc().read(intent, this, nfcText)
 
-        if(NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action){
+      /*  if(NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action){
             val parcelables = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
             with(parcelables) {
                 try {
@@ -282,7 +285,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(applicationContext, "no data found", Toast.LENGTH_SHORT).show()
                 }
             }
-        }
+        }*/
     }
 
     override fun onPause() {

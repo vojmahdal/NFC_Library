@@ -85,7 +85,7 @@ try {
         super.onNewIntent(intent)
 
         EzNfc().read(intent, applicationContext, textView)
-
+        textView.text = ""
         /*
         val action = intent.action
       if(NfcAdapter.ACTION_NDEF_DISCOVERED == action){
