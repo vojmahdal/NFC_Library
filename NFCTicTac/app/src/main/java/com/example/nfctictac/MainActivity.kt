@@ -43,10 +43,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var f8: Button
     private lateinit var f9: Button
 
+   // private lateinit var mainViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val viewModel: MainViewModel
 
         pendingIntent = PendingIntent.getActivity(this, 0,
             Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0
