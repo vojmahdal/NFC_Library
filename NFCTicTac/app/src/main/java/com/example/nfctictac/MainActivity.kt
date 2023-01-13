@@ -62,25 +62,10 @@ class MainActivity : AppCompatActivity() {
                 throw RuntimeException("fail", e)
             }
             intentFilterArray = arrayOf(ndef)
-        if (nfcAdapter == null) {
-            val builder = AlertDialog.Builder(this@MainActivity, R.style.Theme_NFCTicTac)
-            builder.setMessage("Does not support NFC")
-            builder.setPositiveButton("cancel", null)
-            val myDialog = builder.create()
-            myDialog.setCanceledOnTouchOutside(false)
-            myDialog.show()
-        } else if (!nfcAdapter!!.isEnabled) {
-            val builder = AlertDialog.Builder(this@MainActivity, R.style.Theme_NFCTicTac)
-            builder.setTitle("NFC disabled")
-            builder.setMessage("enable NFC")
-            builder.setPositiveButton("settings") { _, _ ->
-                startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
-            }
-            builder.setNegativeButton("cancel", null)
-            val myDialog = builder.create()
-            myDialog.setCanceledOnTouchOutside(false)
-            myDialog.show()
-        }}catch (ex: Exception){
+
+            EzNfc().support(this, nfcAdapter)
+
+        }catch (ex: Exception){
             Toast.makeText(applicationContext, ex.message, Toast.LENGTH_SHORT).show()
         }
 
@@ -224,68 +209,11 @@ class MainActivity : AppCompatActivity() {
         nfcAdapter?.enableForegroundDispatch(this, pendingIntent, intentFilterArray, techListArray)
 
     }
-
     var nfcTagText = ""
     override fun onNewIntent(intent: Intent){
         super.onNewIntent(intent)
-//TODO zmenit nfc textview v read modulu
-       // EzNfc().read(intent, this, nfcText)
+        nfcText = EzNfc().readVar(intent, this)
 
-      /*  if(NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action){
-            val parcelables = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
-            with(parcelables) {
-                try {
-                    val inNdefMessage = this?.get(0) as NdefMessage
-                    val inNdefRecord = inNdefMessage.records
-
-                    var ndefRecord_0 = inNdefRecord[0]
-                    var inMessage = String(ndefRecord_0.payload)
-                    nfcTagText = inMessage.drop(3)
-
-                     nfcText = "${nfcTagText}"
-                    if (!nfcText.equals("")) {
-                        if (NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action
-                            || NfcAdapter.ACTION_TECH_DISCOVERED == intent.action
-                        ) {
-                            val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG) ?: return
-                            val ndef = Ndef.get(tag) ?: return
-
-                            if (ndef.isWritable) {
-                                var message = NdefMessage(
-                                    arrayOf(
-                                        NdefRecord.createTextRecord("en", nfcTagText)
-                                    )
-                                )
-
-                                ndef.connect()
-                                ndef.writeNdefMessage(message)
-                                ndef.close()
-                                Toast.makeText(
-                                    applicationContext,
-                                    "success",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-
-                            } else {
-                                try {
-                                    ndefRecord_0 = inNdefRecord[2]
-                                    inMessage = String(ndefRecord_0.payload)
-
-                                } catch (e: Exception) {
-                                    Toast.makeText(
-                                        applicationContext,
-                                        "nfc not written",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                        }
-                    }
-                } catch (ex: Exception) {
-                    Toast.makeText(applicationContext, "no data found", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }*/
     }
 
     override fun onPause() {

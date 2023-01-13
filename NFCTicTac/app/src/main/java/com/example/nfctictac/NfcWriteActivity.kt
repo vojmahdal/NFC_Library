@@ -72,7 +72,8 @@ class NfcWriteActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        nfcAdapter?.enableForegroundDispatch(this, pendingIntent, intentFilterArray, techListArray)
+       // nfcAdapter?.enableForegroundDispatch(this, pendingIntent, intentFilterArray, techListArray)
+        nfcAdapter?.enableForegroundDispatch(this, pendingIntent, null, null)
     }
 
     override fun onNewIntent(intent: Intent) {
