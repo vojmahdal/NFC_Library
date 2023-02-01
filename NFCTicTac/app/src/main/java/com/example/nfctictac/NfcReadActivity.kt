@@ -10,16 +10,17 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.easynfc.EzNfc
+import com.example.easynfc.EzNfcBuilder
 
 class NfcReadActivity : AppCompatActivity() {
 
     private val nfcAdapter: NfcAdapter? by lazy {
         NfcAdapter.getDefaultAdapter(this)
     }
-
     private var intentFilterArray: Array<IntentFilter>? = null
     private val techListArray = arrayOf(arrayOf(NfcF::class.java.name))
     private var pendingIntent: PendingIntent? = null
+
     private lateinit var textView : TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,8 +34,6 @@ class NfcReadActivity : AppCompatActivity() {
             Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
         val ndef = IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED)
 try {
-
-
     try {
         ndef.addDataType("text/plain")
     } catch (e: IntentFilter.MalformedMimeTypeException) {
@@ -42,8 +41,11 @@ try {
     }
     intentFilterArray = arrayOf(ndef)
 
-    EzNfc().support(this, nfcAdapter)
-
+    //EzNfc().support(this, nfcAdapter)
+    EzNfcBuilder.Builder()
+        .setContext(this)
+        .setNfcAdapter(nfcAdapter)
+        .support()
 
 }catch (e: Exception){
     Toast.makeText(applicationContext, e.message, Toast.LENGTH_SHORT).show()
@@ -51,23 +53,20 @@ try {
     }
         override fun onResume(){
             super.onResume()
-          nfcAdapter?.enableForegroundDispatch(this, pendingIntent, intentFilterArray, techListArray)
+          nfcAdapter?.enableForegroundDispatch(this, pendingIntent, null, null)
         }
-
-        var iswrite = "0"
-
-        var machineId = ""
-
 
 
 
     override fun onNewIntent(intent: Intent){
         super.onNewIntent(intent)
-
-      //  EzNfc().read(intent, applicationContext, textView)
-        textView.text = EzNfc().readVar(intent, applicationContext)
-
-
+        //textView.text = EzNfc().read(intent, applicationContext)
+      ///  EzNfc().setNfcAdapter(nfcAdapter)
+       // textView.text = EzNfc().builderRead(intent, applicationContext)
+        textView.text = EzNfcBuilder.Builder()
+            .setIntent(intent)
+            .setContext(applicationContext)
+            .builderRead()
     }
 
     override fun onPause() {

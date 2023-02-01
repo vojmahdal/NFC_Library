@@ -19,7 +19,6 @@ import android.widget.Toast
 import com.example.easynfc.EzNfc
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var actualBtn: Button
     var player = 0
     var count = 0
 
@@ -209,10 +208,10 @@ class MainActivity : AppCompatActivity() {
         nfcAdapter?.enableForegroundDispatch(this, pendingIntent, intentFilterArray, techListArray)
 
     }
-    var nfcTagText = ""
+
     override fun onNewIntent(intent: Intent){
         super.onNewIntent(intent)
-        nfcText = EzNfc().readVar(intent, this)
+        nfcText = EzNfc().read(intent, this)
 
     }
 

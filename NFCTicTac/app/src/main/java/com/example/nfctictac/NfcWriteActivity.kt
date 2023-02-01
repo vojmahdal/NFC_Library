@@ -16,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.easynfc.EzNfc
+import com.example.easynfc.EzNfcBuilder
 
 class NfcWriteActivity : AppCompatActivity() {
     private var intentFilterArray: Array<IntentFilter>? = null
@@ -78,11 +79,17 @@ class NfcWriteActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        writeNFC(intent)
+        //writeNFC(intent)
+        EzNfcBuilder.Builder()
+            .setIntent(intent)
+            .setContext(applicationContext)
+            .setTextMessage("htt://www.seznam.cz")
+            .writeUrl()
     }
 
 
-    private fun writeNFC(intent: Intent){
+
+ /*   private fun writeNFC(intent: Intent){
         if(countPlayer % 2 == 0){
             EzNfc().write(intent, this, firstMessage)
             textView.text = "Přiřaďte čip druhého hráče"
@@ -92,7 +99,7 @@ class NfcWriteActivity : AppCompatActivity() {
             textView.text = "Přiřaďte čip prvního hráče"
             countPlayer++
         }
-    }
+    }*/
 
     override fun onPause() {
         if(this.isFinishing){
