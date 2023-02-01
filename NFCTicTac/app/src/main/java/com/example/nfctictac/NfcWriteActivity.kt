@@ -16,7 +16,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.easynfc.EzNfc
-import com.example.easynfc.EzNfcBuilder
 
 class NfcWriteActivity : AppCompatActivity() {
     private var intentFilterArray: Array<IntentFilter>? = null
@@ -80,11 +79,12 @@ class NfcWriteActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         //writeNFC(intent)
-        EzNfcBuilder.Builder()
+        EzNfc.Builder()
             .setIntent(intent)
             .setContext(applicationContext)
-            .setTextMessage("htt://www.seznam.cz")
-            .writeUrl()
+            //.setTextMessage("https://in-kotlin.com/design-patterns/builder-pattern/")
+            .setTextMessage("Zkouska1234")
+            .write()
     }
 
 

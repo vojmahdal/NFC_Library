@@ -62,8 +62,10 @@ class MainActivity : AppCompatActivity() {
             }
             intentFilterArray = arrayOf(ndef)
 
-            EzNfc().support(this, nfcAdapter)
-
+            EzNfc.Builder()
+                .setContext(this)
+                .setNfcAdapter(nfcAdapter)
+                .support()
         }catch (ex: Exception){
             Toast.makeText(applicationContext, ex.message, Toast.LENGTH_SHORT).show()
         }
@@ -211,8 +213,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent){
         super.onNewIntent(intent)
-        nfcText = EzNfc().read(intent, this)
-
+        nfcText = EzNfc.Builder()
+            .setIntent(intent)
+            .setContext(this)
+            .builderRead()
     }
 
     override fun onPause() {

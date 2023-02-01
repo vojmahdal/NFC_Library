@@ -10,7 +10,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.easynfc.EzNfc
-import com.example.easynfc.EzNfcBuilder
 
 class NfcReadActivity : AppCompatActivity() {
 
@@ -42,7 +41,7 @@ try {
     intentFilterArray = arrayOf(ndef)
 
     //EzNfc().support(this, nfcAdapter)
-    EzNfcBuilder.Builder()
+    EzNfc.Builder()
         .setContext(this)
         .setNfcAdapter(nfcAdapter)
         .support()
@@ -53,7 +52,7 @@ try {
     }
         override fun onResume(){
             super.onResume()
-          nfcAdapter?.enableForegroundDispatch(this, pendingIntent, null, null)
+          nfcAdapter?.enableForegroundDispatch(this, pendingIntent, intentFilterArray, techListArray)
         }
 
 
@@ -63,7 +62,7 @@ try {
         //textView.text = EzNfc().read(intent, applicationContext)
       ///  EzNfc().setNfcAdapter(nfcAdapter)
        // textView.text = EzNfc().builderRead(intent, applicationContext)
-        textView.text = EzNfcBuilder.Builder()
+        textView.text = EzNfc.Builder()
             .setIntent(intent)
             .setContext(applicationContext)
             .builderRead()
