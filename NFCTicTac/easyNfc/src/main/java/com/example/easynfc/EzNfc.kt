@@ -3,7 +3,6 @@ package com.example.easynfc
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.nfc.NdefMessage
@@ -18,18 +17,16 @@ import android.widget.Toast
 
 
 
-
-
-
-
-class EzNfc constructor(
-    private var intent: Intent,
+class EzNfc(
+    var intent: Intent,
     private var activity: Activity,
-    private var nfcAdapter: NfcAdapter? = null,
-    private var intentFilterArray: Array<IntentFilter>? = null,
+    var nfcAdapter: NfcAdapter? = null,
+    var intentFilterArray: Array<IntentFilter>? = null,
     var textMessage: String = ""
 
 ){
+    private var outputMessage: String = ""
+    private val techListArray = arrayOf(arrayOf(NfcF::class.java.name))
     /**
      * function that verified, if device support NFC reader.
      * this function verified, if NFC reader is enabled in settings as well
@@ -37,13 +34,7 @@ class EzNfc constructor(
      * Use this function in Activity, that works with NFC
      * Use it in fun OnCreate after initialing IntentFilterArray in try statement
      */
-    var outputMessage: String = ""
-
-
-    //private var intentFilterArray: Array<IntentFilter>? = null
-    private val techListArray = arrayOf(arrayOf(NfcF::class.java.name))
-
-    fun support(){
+    private fun support(){
         try {
             if (nfcAdapter == null) {
                 val builder = AlertDialog.Builder(activity.applicationContext, R.style.Dialog)
@@ -96,7 +87,7 @@ class EzNfc constructor(
      * third attribute is string value, which is written on NFC tag
      * If writing on NFC is successful, toast shows text "Successfully written".
      */
-    fun write(){
+    fun writeText(){
         try {
             if (NfcAdapter.ACTION_TECH_DISCOVERED == intent.action
                 || NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action
@@ -191,7 +182,7 @@ class EzNfc constructor(
     /**
      * function to check write
      */
-    fun checkWriteText(): Boolean{
+    private fun checkWriteText(): Boolean{
         return outputMessage == textMessage
     }
 
@@ -201,34 +192,11 @@ class EzNfc constructor(
             nfcAdapter?.disableForegroundDispatch(activity)
         }
     }
-  /*  fun init(){
-        private val nfcAdapter: NfcAdapter? by lazy {
-            NfcAdapter.getDefaultAdapter(this)
-        }
-        private var intentFilterArray: Array<IntentFilter>? = null
-        private val techListArray = arrayOf(arrayOf(NfcF::class.java.name))
-    }*/
-    fun onCreate(intentFilterArray: Array<IntentFilter>?){
 
-      val ndef = IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED)
-      try {
-          try {
-              ndef.addDataType("text/plain")
-          } catch (e: IntentFilter.MalformedMimeTypeException) {
-              throw RuntimeException("fail", e)
-          }
-       //   intentFilterArray = arrayOf(ndef)
-
-          //EzNfc().support(this, nfcAdapter)
-          /*  EzNfc.Builder()
-                .setContext(this)
-                .setNfcAdapter(nfcAdapter)
-                .support()
-        */
-      }catch (e: Exception){
-          Toast.makeText(activity.applicationContext, e.message, Toast.LENGTH_SHORT).show()
-      }
-    }
+    /**
+     * function onCreate
+     * insert after pendingIntent in OnCreate fun
+     */
     fun onCreateFilter(): Array<IntentFilter>?{
 
         val ndef = IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED)
@@ -239,13 +207,6 @@ class EzNfc constructor(
                 throw RuntimeException("fail", e)
             }
             intentFilterArray = arrayOf(ndef)
-
-            //EzNfc().support(this, nfcAdapter)
-            /*  EzNfc.Builder()
-                  .setContext(this)
-                  .setNfcAdapter(nfcAdapter)
-                  .support()
-          */
             support()
         }catch (e: Exception){
             Toast.makeText(activity.applicationContext, e.message, Toast.LENGTH_SHORT).show()
@@ -254,7 +215,11 @@ class EzNfc constructor(
     }
 
 
-    fun onResume(pendingIntent: PendingIntent?){
+    fun onResumeRead(pendingIntent: PendingIntent?){
+        nfcAdapter?.enableForegroundDispatch(activity, pendingIntent, intentFilterArray, techListArray)
+    }
+
+    fun onResumeWrite(pendingIntent: PendingIntent?){
         nfcAdapter?.enableForegroundDispatch(activity, pendingIntent, intentFilterArray, techListArray)
     }
 }
