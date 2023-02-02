@@ -79,12 +79,12 @@ class NfcWriteActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         //writeNFC(intent)
-        EzNfc.Builder()
+       /* EzNfc.Builder()
             .setIntent(intent)
             .setContext(applicationContext)
             //.setTextMessage("https://in-kotlin.com/design-patterns/builder-pattern/")
             .setTextMessage("Zkouska1234")
-            .write()
+            .write()*/
     }
 
 

@@ -13,11 +13,7 @@ import com.example.easynfc.EzNfc
 
 class NfcReadActivity : AppCompatActivity() {
 
-    private val nfcAdapter: NfcAdapter? by lazy {
-        NfcAdapter.getDefaultAdapter(this)
-    }
     private var intentFilterArray: Array<IntentFilter>? = null
-    private val techListArray = arrayOf(arrayOf(NfcF::class.java.name))
     private var pendingIntent: PendingIntent? = null
 
     private lateinit var textView : TextView
@@ -26,52 +22,25 @@ class NfcReadActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.nfc_read_activity)
-
         textView = findViewById(R.id.txtviewmachineid)
 
         pendingIntent = PendingIntent.getActivity(this, 0,
             Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
-        val ndef = IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED)
-try {
-    try {
-        ndef.addDataType("text/plain")
-    } catch (e: IntentFilter.MalformedMimeTypeException) {
-        throw RuntimeException("fail", e)
-    }
-    intentFilterArray = arrayOf(ndef)
+       intentFilterArray = EzNfc(intent, this, NfcAdapter.getDefaultAdapter(this), intentFilterArray).onCreateFilter()
 
-    //EzNfc().support(this, nfcAdapter)
-    EzNfc.Builder()
-        .setContext(this)
-        .setNfcAdapter(nfcAdapter)
-        .support()
-
-}catch (e: Exception){
-    Toast.makeText(applicationContext, e.message, Toast.LENGTH_SHORT).show()
-}
     }
         override fun onResume(){
             super.onResume()
-          nfcAdapter?.enableForegroundDispatch(this, pendingIntent, intentFilterArray, techListArray)
+            EzNfc(intent, this, NfcAdapter.getDefaultAdapter(this), intentFilterArray).onResume(pendingIntent)
         }
-
-
 
     override fun onNewIntent(intent: Intent){
         super.onNewIntent(intent)
-        //textView.text = EzNfc().read(intent, applicationContext)
-      ///  EzNfc().setNfcAdapter(nfcAdapter)
-       // textView.text = EzNfc().builderRead(intent, applicationContext)
-        textView.text = EzNfc.Builder()
-            .setIntent(intent)
-            .setContext(applicationContext)
-            .builderRead()
+        textView.text = EzNfc(intent, this).builderRead()
     }
 
     override fun onPause() {
-        if(this.isFinishing){
-            nfcAdapter?.disableForegroundDispatch(this)
-        }
+       EzNfc(intent, this).onPause()
         super.onPause()
 
     }
