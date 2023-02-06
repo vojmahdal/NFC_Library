@@ -15,7 +15,12 @@ class NfcWriteActivity : AppCompatActivity() {
 
 
     private lateinit var textView : TextView
- //   val nfcTs = EzNfc(intent, this)
+
+    private val nfcAdapter: NfcAdapter? by lazy {
+        NfcAdapter.getDefaultAdapter(this)
+    }
+    private var nfcLib = EzNfc( this, intentFilterArray = intentFilterArray)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,29 +28,26 @@ class NfcWriteActivity : AppCompatActivity() {
         setContentView(R.layout.nfc_write_activity)
         textView = findViewById(R.id.textNfc)
 
+        nfcLib.nfcAdapter = nfcAdapter
+
         pendingIntent = PendingIntent.getActivity(this, 0,
             Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
-
-       /* intentFilterArray = EzNfc(intent,
-            this,
-            NfcAdapter.getDefaultAdapter(this),
-            intentFilterArray)
-            .onCreateFilter()*/
+        intentFilterArray = nfcLib.onCreateFilter()
     }
 
     override fun onResume() {
         super.onResume()
-        //EzNfc(intent, this, NfcAdapter.getDefaultAdapter(this), intentFilterArray).onResumeRead(pendingIntent)
+       nfcLib.onResumeWrite(pendingIntent)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        //EzNfc(intent, this, textMessage = "nfc_Jedna").writeText()
+        nfcLib.writeText(intent, "knihovna")
 
     }
 
     override fun onPause() {
-     //EzNfc(intent, this).onPause()
+     nfcLib.onPause()
         super.onPause()
     }
 }

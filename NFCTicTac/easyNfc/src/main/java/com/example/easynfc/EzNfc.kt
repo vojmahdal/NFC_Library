@@ -16,17 +16,18 @@ import android.webkit.URLUtil
 import android.widget.Toast
 
 
-
 class EzNfc(
-    var intent: Intent,
     private var activity: Activity,
-    var nfcAdapter: NfcAdapter? = null,
-    var intentFilterArray: Array<IntentFilter>? = null,
-    var textMessage: String = ""
-
+    private var intentFilterArray: Array<IntentFilter>? = null
 ){
-    private var outputMessage: String = ""
+    private lateinit var intent: Intent
     private val techListArray = arrayOf(arrayOf(NfcF::class.java.name))
+
+    private var textMessage: String = ""
+    private var outputMessage: String = ""
+
+    var nfcAdapter: NfcAdapter? = null
+
     /**
      * function that verified, if device support NFC reader.
      * this function verified, if NFC reader is enabled in settings as well
@@ -67,7 +68,8 @@ class EzNfc(
      * function need only attributes Intent and Context
      * this function return value type String
      */
-    fun builderRead() : String{
+    fun builderRead(intnt: Intent) : String{
+        intent = intnt
         outputMessage = ""
         val action = intent.action
         if (NfcAdapter.ACTION_NDEF_DISCOVERED == action){
@@ -87,7 +89,9 @@ class EzNfc(
      * third attribute is string value, which is written on NFC tag
      * If writing on NFC is successful, toast shows text "Successfully written".
      */
-    fun writeText(){
+    fun writeText(intnt: Intent, txt: String){
+        intent = intnt
+        textMessage = txt
         try {
             if (NfcAdapter.ACTION_TECH_DISCOVERED == intent.action
                 || NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action
@@ -123,7 +127,9 @@ class EzNfc(
     /**
      * write NFC url
      */
-    fun writeUrl(){
+    fun writeUrl(intnt: Intent, txt: String){
+        intent = intnt
+        textMessage = txt
         if (checkUrl()){
             try {
                 if (NfcAdapter.ACTION_TECH_DISCOVERED == intent.action
