@@ -58,7 +58,7 @@ class NfcReadActivity : AppCompatActivity() {
        // textView.text =    EzNfc(intent, this).builderRead()
 
 
-          textView.text =  nfcLib.builderRead(intent)
+          textView.text =  nfcLib.read(intent)
 
     }
 

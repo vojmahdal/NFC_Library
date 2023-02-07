@@ -23,8 +23,8 @@ class EzNfc(
     private lateinit var intent: Intent
     private val techListArray = arrayOf(arrayOf(NfcF::class.java.name))
 
-    private var textMessage: String = ""
-    private var outputMessage: String = ""
+     var textMessage: String = ""
+     var outputMessage: String = ""
 
     var nfcAdapter: NfcAdapter? = null
 
@@ -68,7 +68,7 @@ class EzNfc(
      * function need only attributes Intent and Context
      * this function return value type String
      */
-    fun builderRead(intnt: Intent) : String{
+    fun read(intnt: Intent) : String{
         intent = intnt
         outputMessage = ""
         val action = intent.action
