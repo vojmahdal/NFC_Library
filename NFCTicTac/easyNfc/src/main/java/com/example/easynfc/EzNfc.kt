@@ -23,13 +23,13 @@ class EzNfc(
     private lateinit var intent: Intent
     private val techListArray = arrayOf(arrayOf(NfcF::class.java.name))
 
-     var textMessage: String = ""
-     var outputMessage: String = ""
+     private var textMessage: String = ""
+     private var outputMessage: String = ""
 
     var nfcAdapter: NfcAdapter? = null
 
     /**
-     * function that verified, if device support NFC reader.
+     * private function that verified, if device support NFC reader.
      * this function verified, if NFC reader is enabled in settings as well
      * function need two attributes, Context and NfcAdapter?
      * Use this function in Activity, that works with NFC
@@ -76,10 +76,14 @@ class EzNfc(
             readPrivate()
         }
         else{
-            Log.e("read_error", "Cannot read from NFC tag")
-            Toast.makeText(activity.applicationContext, "cannot read from NFC", Toast.LENGTH_SHORT).show()
+           // Log.e("read_error", "Cannot read from NFC tag")
+          //  Toast.makeText(activity.applicationContext, "cannot read from NFC", Toast.LENGTH_SHORT).show()
+           // toast( "cannot read from NFC")
         }
         return outputMessage
+    }
+    private fun toast(text: String){
+        Toast.makeText(activity.applicationContext, text, Toast.LENGTH_SHORT).show()
     }
 
     /**function to write Record from NFC
@@ -202,6 +206,7 @@ class EzNfc(
     /**
      * function onCreate
      * insert after pendingIntent in OnCreate fun
+     * use it to initialize IntentFilterArray
      */
     fun onCreateFilter(): Array<IntentFilter>?{
 
@@ -220,12 +225,21 @@ class EzNfc(
         return intentFilterArray
     }
 
-
+    /**function to read from NFC tag
+     * function needs only pendingIntent
+     * insert function into onResume
+     */
     fun onResumeRead(pendingIntent: PendingIntent?){
         nfcAdapter?.enableForegroundDispatch(activity, pendingIntent, intentFilterArray, techListArray)
     }
-
+    /**function to write data on NFC tag
+     * function needs only pendingIntent
+     * insert function into onResume
+     */
     fun onResumeWrite(pendingIntent: PendingIntent?){
         nfcAdapter?.enableForegroundDispatch(activity, pendingIntent, intentFilterArray, techListArray)
     }
+
+
+
 }

@@ -28,6 +28,9 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    testOptions{
+      //  unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -48,4 +51,9 @@ dependencies {
 
     /** truth test */
     androidTestImplementation("com.google.truth:truth:1.1.3")
+
+    /**mockito */
+    testImplementation "org.mockito.kotlin:mockito-kotlin:4.1.0"
+
+
 }
