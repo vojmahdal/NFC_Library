@@ -220,7 +220,7 @@ class EzNfc(
             intentFilterArray = arrayOf(ndef)
             support()
         }catch (e: Exception){
-            Toast.makeText(activity.applicationContext, e.message, Toast.LENGTH_SHORT).show()
+//            Toast.makeText(activity.applicationContext, e.message, Toast.LENGTH_SHORT).show()
         }
         return intentFilterArray
     }

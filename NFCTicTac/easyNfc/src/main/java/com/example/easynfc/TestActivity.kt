@@ -16,7 +16,7 @@ class TestActivity : AppCompatActivity() {
     private var intentFilterArray: Array<IntentFilter>? = null
     private var pendingIntent: PendingIntent? = null
 
-    private val nfcAdapter: NfcAdapter? by lazy {
+    val nfcAdapter: NfcAdapter? by lazy {
         NfcAdapter.getDefaultAdapter(this)
     }
 
