@@ -15,10 +15,12 @@ import org.junit.Assert.*
 
 import org.junit.Before
 import org.junit.Test
+
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.mock
+
 import java.net.URL
 
 class EzNfcTest {
@@ -69,15 +71,25 @@ class EzNfcTest {
         val tag = Mockito.mock(Tag::class.java)
         val data = byteArrayOf(0x00, 0x01, 0x02, 0x03, 0x04)
         `when`(intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG)).thenReturn(tag)
-        //`when`(tag.ndefMessage).thenReturn(NdefMessage(data))
+        `when`(tag.ndefMessage).thenReturn(NdefMessage(data))
+
     }
 
     @Test
     fun writeText() {
         val intent = mock(Intent::class.java)
+        val tag = Mockito.mock(Tag::class.java)
         val result = libEzNfc.writeText(intent, "test")
         val read = libEzNfc.read(intent)
+        assertEquals(read, "test")
 
+    }
+    @Test
+    fun testReadNFC(){
+        val mockTag = Mockito.mock(Tag::class.java)
+        Mockito.`when`(mockTag.read(Mockito.anyString())).thenReturn(true)
+        val testData = "testData"
+        assertTrue(mockTag.read(testData))
     }
 
     @Test
