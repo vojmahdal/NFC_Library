@@ -16,6 +16,13 @@ import android.webkit.URLUtil
 import android.widget.Toast
 
 
+/**
+ * Ez nfc
+ *
+ * @property activity
+ * @property intentFilterArray
+ * @constructor Create empty Ez nfc
+ */
 class EzNfc(
     private var activity: Activity,
     private var intentFilterArray: Array<IntentFilter>? = null
@@ -62,11 +69,11 @@ class EzNfc(
         }
     }
 
-    /**function to read Record from NFC
-     * Use this function in Activity, that read records
-     * Use it in fun OnNewIntent()
-     * function need only attributes Intent and Context
-     * this function return value type String
+    /**
+     * Read
+     *
+     * @param intnt
+     * @return
      */
     fun read(intnt: Intent) : String{
         intent = intnt
@@ -86,11 +93,11 @@ class EzNfc(
         Toast.makeText(activity.applicationContext, text, Toast.LENGTH_SHORT).show()
     }
 
-    /**function to write Record from NFC
-     * Use this function in Activity, that write records
-     * Use it in fun OnNewIntent()
-     * function need attributes intent and text, that will be written on NFC
-     * If writing on NFC is successful, toast shows text "Successfully written".
+    /**
+     * Write text
+     *
+     * @param intnt
+     * @param txt
      */
     fun writeText(intnt: Intent, txt: String){
         intent = intnt
@@ -127,13 +134,12 @@ class EzNfc(
             ndef.close()
         }
     }
-    /**function to write URL Record from NFC
-     * Use this function in Activity, that write records
-     * Use it in fun OnNewIntent()
-     * function need attributes intent and URL text, that will be written on NFC
-     * If writing on NFC is successful, toast shows text "Successfully written".
-     * Remember, that URL must be valid, if is not, Toast shows text "url is not valid"
-     * and URL won't be written on NFC tag
+
+    /**
+     * Write url
+     *
+     * @param intnt
+     * @param txt
      */
     fun writeUrl(intnt: Intent, txt: String){
         intent = intnt
@@ -200,8 +206,8 @@ class EzNfc(
         return outputMessage == textMessage
     }
 
-    /**function onPause
-     * insert in onPause fun
+    /**
+     * On pause
      *
      */
     fun onPause(){
@@ -211,9 +217,9 @@ class EzNfc(
     }
 
     /**
-     * function onCreate
-     * insert after pendingIntent in OnCreate fun
-     * use it to initialize IntentFilterArray
+     * On create filter
+     *
+     * @return
      */
     fun onCreateFilter(): Array<IntentFilter>?{
 
@@ -232,16 +238,19 @@ class EzNfc(
         return intentFilterArray
     }
 
-    /**function to read from NFC tag
-     * function needs only pendingIntent
-     * insert function into onResume
+    /**
+     * On resume read
+     *
+     * @param pendingIntent
      */
     fun onResumeRead(pendingIntent: PendingIntent?){
         nfcAdapter?.enableForegroundDispatch(activity, pendingIntent, intentFilterArray, techListArray)
     }
-    /**function to write data on NFC tag
-     * function needs only pendingIntent
-     * insert function into onResume
+
+    /**
+     * On resume write
+     *
+     * @param pendingIntent
      */
     fun onResumeWrite(pendingIntent: PendingIntent?){
         nfcAdapter?.enableForegroundDispatch(activity, pendingIntent, intentFilterArray, techListArray)
