@@ -42,8 +42,6 @@ class EzNfcTest {
 
     private lateinit var toast: Toast
 
-    private val urlUtil = URLUtil()
-    private val ndefMock = mock<Ndef>()
 
     @Before
     fun setUp() {
@@ -117,20 +115,20 @@ class EzNfcTest {
     }
 
 
-    /** done*/
+    /* done*/
     @Test
     fun onCreateFilter() {
         var createdFilter: Array<IntentFilter>? = null
         createdFilter = libEzNfc.onCreateFilter()
         assertNotNull(createdFilter)
     }
-    /** done*/
+    /* done*/
     @Test
     fun onResumeRead() = run{
         val pendingIntent = Mockito.mock(PendingIntent::class.java)
         libEzNfc.onResumeRead(pendingIntent)
     }
-    /** done*/
+    /* done*/
     @Test
     fun onResumeWrite() {
         val pendingIntent = Mockito.mock(PendingIntent::class.java)

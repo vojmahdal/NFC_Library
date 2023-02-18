@@ -15,11 +15,11 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.rule.ActivityTestRule
 import com.google.common.truth.Truth.assertThat
 import org.hamcrest.core.Is.`is`
 import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -39,12 +39,15 @@ class EzNfcTest {
 
     private lateinit var nfcAdapter: NfcAdapter
     private lateinit var nfcLib: EzNfc
-private lateinit var activityScenario: ActivityScenario<TestActivity>
+//private lateinit var activityScenario: ActivityScenario<TestActivity>
  /*   @get:Rule
     val mMainActivityRule: ActivityScenarioRule<TestActivity> =
         ActivityScenarioRule(TestActivity::class.java)
 */
-    @Before
+    @get: Rule
+    val activityTestRule = ActivityTestRule(TestActivity::class.java)
+
+  /*  @Before
     fun setup(){
         val context = InstrumentationRegistry
             .getInstrumentation().targetContext
@@ -58,11 +61,36 @@ private lateinit var activityScenario: ActivityScenario<TestActivity>
     fun tearDown() {
         activityScenario.close()
     }
-
-
-
+*/
 
     @Test
+    fun testNfcReader() {
+        // Ensure that NFC is enabled
+        val nfcAdapter = NfcAdapter.getDefaultAdapter(activityTestRule.activity)
+        assertNotNull(nfcAdapter)
+        assertTrue(nfcAdapter.isEnabled)
+
+        // Create a mock NDEF message to simulate the data on the tag
+        val message = NdefMessage(
+            arrayOf(
+                NdefRecord.createTextRecord(
+                   "en",
+                    "Hello, NFC World!"
+                )
+            )
+        )
+
+        // Create an NDEF intent with the mock message
+        val intent = Intent(activityTestRule.activity, activityTestRule.activity::class.java)
+        intent.action = NfcAdapter.ACTION_NDEF_DISCOVERED
+        intent.putExtra(NfcAdapter.EXTRA_NDEF_MESSAGES, arrayOf(message))
+
+        // Send the intent to the activity
+        activityTestRule.activity.intent = intent
+
+    }
+
+   /* @Test
     fun Test(){
         if(!nfcAdapter.isEnabled){
             return
@@ -85,5 +113,5 @@ private lateinit var activityScenario: ActivityScenario<TestActivity>
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
         return intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
-    }
+    }*/
 }

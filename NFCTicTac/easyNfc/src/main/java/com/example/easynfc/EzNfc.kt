@@ -89,8 +89,7 @@ class EzNfc(
     /**function to write Record from NFC
      * Use this function in Activity, that write records
      * Use it in fun OnNewIntent()
-     * function need attributes intent and context
-     * third attribute is string value, which is written on NFC tag
+     * function need attributes intent and text, that will be written on NFC
      * If writing on NFC is successful, toast shows text "Successfully written".
      */
     fun writeText(intnt: Intent, txt: String){
@@ -128,8 +127,13 @@ class EzNfc(
             ndef.close()
         }
     }
-    /**
-     * write NFC url
+    /**function to write URL Record from NFC
+     * Use this function in Activity, that write records
+     * Use it in fun OnNewIntent()
+     * function need attributes intent and URL text, that will be written on NFC
+     * If writing on NFC is successful, toast shows text "Successfully written".
+     * Remember, that URL must be valid, if is not, Toast shows text "url is not valid"
+     * and URL won't be written on NFC tag
      */
     fun writeUrl(intnt: Intent, txt: String){
         intent = intnt
@@ -196,7 +200,10 @@ class EzNfc(
         return outputMessage == textMessage
     }
 
-    /**function onPause**/
+    /**function onPause
+     * insert in onPause fun
+     *
+     */
     fun onPause(){
         if(activity.isFinishing){
             nfcAdapter?.disableForegroundDispatch(activity)
