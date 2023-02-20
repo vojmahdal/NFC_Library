@@ -16,7 +16,6 @@ class NfcReadActivity : AppCompatActivity() {
 
     private lateinit var textView : TextView
 
-    //private lateinit var nfcAdapter: NfcAdapter
     private val nfcAdapter: NfcAdapter? by lazy {
         NfcAdapter.getDefaultAdapter(this)
     }
@@ -33,11 +32,6 @@ class NfcReadActivity : AppCompatActivity() {
 
         pendingIntent = PendingIntent.getActivity(this, 0,
             Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
-
-           //intentFilterArray = EzNfc(intent, this,  NfcAdapter.getDefaultAdapter(this), intentFilterArray).onCreateFilter()
-
-
-            //nfcLib.nfcAdapter = nfcAdapter
 
             intentFilterArray = nfcLib.onCreateFilter()
     }

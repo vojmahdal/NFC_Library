@@ -17,11 +17,12 @@ import android.widget.Toast
 
 
 /**
- * Ez nfc
+ * Library class for NFC
  *
- * @property activity
- * @property intentFilterArray
+ * @property activity actual Activity
+ * @property intentFilterArray create new intentFilterArray in activity
  * @constructor Create empty Ez nfc
+ * @sample private var nfcLib = EzNfc(this, intentFilterArray)
  */
 class EzNfc(
     private var activity: Activity,
@@ -70,10 +71,12 @@ class EzNfc(
     }
 
     /**
-     * Read
+     * function is optional,  use in fun OnNewIntent(intent: Intent)
      *
-     * @param intnt
-     * @return
+     * @param intnt parse here new intent
+     * @return string message of NFC tag
+     *
+     * @sample val read = NFCLib.read(pendingIntent)
      */
     fun read(intnt: Intent) : String{
         intent = intnt
@@ -94,10 +97,11 @@ class EzNfc(
     }
 
     /**
-     * Write text
+     * function is optional,  use in fun OnNewIntent(intent: Intent)
      *
-     * @param intnt
-     * @param txt
+     * @param intnt parse here new intent
+     *@param txt parse here message of type String
+     * @sample  NFCLib.writeText(pendingIntent, "test")
      */
     fun writeText(intnt: Intent, txt: String){
         intent = intnt
@@ -136,10 +140,11 @@ class EzNfc(
     }
 
     /**
-     * Write url
+     * function is optional, use in fun OnNewIntent(intent: Intent)
      *
-     * @param intnt
-     * @param txt
+     * @param intnt parse here new intent
+     * @param txt parse here message of type String, must be valid Url
+     * @sample  NFCLib.writeUrl(pendingIntent, "http://www.test.com")
      */
     fun writeUrl(intnt: Intent, txt: String){
         intent = intnt
@@ -207,8 +212,8 @@ class EzNfc(
     }
 
     /**
-     * On pause
-     *
+     * function is mandatory, use in fun onPause
+     * @sample onPause()
      */
     fun onPause(){
         if(activity.isFinishing){
@@ -219,7 +224,8 @@ class EzNfc(
     /**
      * On create filter
      *
-     * @return
+     * @return intentFilterArray, for used Activity
+     * @sample  intentFilterArray = nfcLib.onCreateFilter()
      */
     fun onCreateFilter(): Array<IntentFilter>?{
 
@@ -253,6 +259,15 @@ class EzNfc(
      * @param pendingIntent
      */
     fun onResumeWrite(pendingIntent: PendingIntent?){
+        nfcAdapter?.enableForegroundDispatch(activity, pendingIntent, intentFilterArray, techListArray)
+    }
+
+    /**
+     *  function is mandatory, use in fun onResume
+     *
+     * @param pendingIntent
+     */
+    fun onResume(pendingIntent: PendingIntent?){
         nfcAdapter?.enableForegroundDispatch(activity, pendingIntent, intentFilterArray, techListArray)
     }
 
