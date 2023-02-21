@@ -22,20 +22,12 @@
             />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/start_button"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="36dp"
-            android:text="start"
-            android:textColor="@color/black"/>
-        <com.google.android.material.button.MaterialButton
             android:id="@+id/nfc_button"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="36dp"
-            android:text="Write NFC chips"
+            android:text="Write NFC tag"
             android:textColor="@color/black"/>
         <com.google.android.material.button.MaterialButton
             android:id="@+id/nfc_button_read"
@@ -43,24 +35,10 @@
             android:layout_height="60dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="36dp"
-            android:text="Read NFC debug"
+            android:text="Read NFC tag"
             android:textColor="@color/black"/>
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/settings_button"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="36dp"
-            android:text="settings"
-            android:textColor="@color/black"/>
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/quit_button"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="36dp"
-            android:text="quit"
-            android:textColor="@color/black"/>
+
+
 
 
     </LinearLayout>

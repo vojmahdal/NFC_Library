@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'maven-publish'
     id 'org.jetbrains.dokka'
 }
 
@@ -41,6 +42,8 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.7.0'
+    implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'com.google.guava:guava:31.1-jre'
 
 
     /** Testing */
@@ -58,7 +61,19 @@ dependencies {
     /**mockito */
     testImplementation "org.mockito.kotlin:mockito-kotlin:4.1.0"
     androidTestImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
-    //robolectric
-    testImplementation "org.robolectric:robolectric:4.9.2"
-    androidTestImplementation "org.robolectric:robolectric:4.9.2"
+
+}
+
+afterEvaluate{
+    publishing{
+        publications {
+            release(MavenPublication){
+                from components.release
+
+                groupId = 'com.github.vojmahdal'
+                artifactId = 'easy-nfc'
+                version = '1.0'
+            }
+        }
+    }
 }

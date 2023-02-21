@@ -69,4 +69,6 @@ dependencies {
 
     //my own nfc kotlin library
     implementation project(path: ':easyNfc')
+
+   // implementation 'com.example:easyNfc:1.0.0'
 }
