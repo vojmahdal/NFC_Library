@@ -18,11 +18,28 @@ import android.widget.Toast
 
 /**
  * Library class for NFC
+ * use it in your class of Activity
  *
+ *example:
+ *
+ * class ExampleActivity : AppCompatActivity() {
+ *
+ *private var intentFilterArray: Array<IntentFilter>? = null
+ *
+ *private var pendingIntent: PendingIntent? = null
+ *
+ *private val nfcAdapter: NfcAdapter? by lazy {
+ *
+ *   NfcAdapter.getDefaultAdapter(this)
+ *
+ *}
+ *
+ * private var nfcLib = EzNfc(this, intentFilterArray)
+ *
+ * ...
  * @property activity actual Activity
  * @property intentFilterArray create new intentFilterArray in activity
- * @constructor Create empty Ez nfc
- * @sample private var nfcLib = EzNfc(this, intentFilterArray)
+ * @constructor Create instance of Ez nfc
  */
 class EzNfc(
     private var activity: Activity,
@@ -73,10 +90,19 @@ class EzNfc(
     /**
      * function is optional,  use in fun OnNewIntent(intent: Intent)
      *
-     * @param intnt parse here new intent
-     * @return string message of NFC tag
+     * function is for reading data from NFC tag
      *
-     * @sample val read = NFCLib.read(pendingIntent)
+     * example:
+     *
+     * override fun onNewIntent(intent: Intent){
+     *
+     * super.onNewIntent(intent)
+     *
+     * val read = NFCLib.read(pendingIntent)
+     *
+     * }
+     * @param intnt parse here pendingIntent
+     * @return string message of NFC tag
      */
     fun read(intnt: Intent) : String{
         intent = intnt
@@ -86,8 +112,8 @@ class EzNfc(
             readPrivate()
         }
         else{
-           // Log.e("read_error", "Cannot read from NFC tag")
-          //  Toast.makeText(activity.applicationContext, "cannot read from NFC", Toast.LENGTH_SHORT).show()
+            Log.e("read_error", "Cannot read from NFC tag")
+            Toast.makeText(activity.applicationContext, "cannot read from NFC", Toast.LENGTH_SHORT).show()
            // toast( "cannot read from NFC")
         }
         return outputMessage
@@ -99,9 +125,20 @@ class EzNfc(
     /**
      * function is optional,  use in fun OnNewIntent(intent: Intent)
      *
+     * function is for writing data of text into NFC tag
+     *
+     * example:
+     *
+     *  override fun onNewIntent(intent: Intent) {
+     *
+     *  super.onNewIntent(intent)
+     *
+     *   nfcLib.writeText(intent, "example")
+     *
+     * }
+     *
      * @param intnt parse here new intent
      *@param txt parse here message of type String
-     * @sample  NFCLib.writeText(pendingIntent, "test")
      */
     fun writeText(intnt: Intent, txt: String){
         intent = intnt
@@ -142,9 +179,19 @@ class EzNfc(
     /**
      * function is optional, use in fun OnNewIntent(intent: Intent)
      *
+     * function is for writing data of url into NFC tag
+     *
+     * example:
+     *
+     *  override fun onNewIntent(intent: Intent) {
+     *
+     *  super.onNewIntent(intent)
+     *
+     *   nfcLib.writeUrl(intent, ""http://www.example.com"")
+     *
+     * }
      * @param intnt parse here new intent
      * @param txt parse here message of type String, must be valid Url
-     * @sample  NFCLib.writeUrl(pendingIntent, "http://www.test.com")
      */
     fun writeUrl(intnt: Intent, txt: String){
         intent = intnt
@@ -213,7 +260,16 @@ class EzNfc(
 
     /**
      * function is mandatory, use in fun onPause
-     * @sample onPause()
+     *
+     * example:
+     *
+     * override fun onPause() {
+     *
+     * nfcLib.onPause()
+     *
+     * super.onPause()
+     *
+     *   }
      */
     fun onPause(){
         if(activity.isFinishing){
@@ -224,8 +280,27 @@ class EzNfc(
     /**
      * On create filter
      *
+     * example:
+     *
+     *  override fun onCreate(savedInstanceState: Bundle?) {
+     *
+     *super.onCreate(savedInstanceState)
+     *
+     *setContentView(R.layout.nfc_read_activity)
+     *
+     *textView = findViewById(R.id.txtviewmachineid)
+     *
+     *nfcLib.nfcAdapter = nfcAdapter
+     *
+     *pendingIntent = PendingIntent.getActivity(this, 0,
+     *
+     * Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
+     *
+     *intentFilterArray = nfcLib.onCreateFilter()
+     *
+     * }
+     *
      * @return intentFilterArray, for used Activity
-     * @sample  intentFilterArray = nfcLib.onCreateFilter()
      */
     fun onCreateFilter(): Array<IntentFilter>?{
 
@@ -265,6 +340,15 @@ class EzNfc(
     /**
      *  function is mandatory, use in fun onResume
      *
+     * example:
+     *
+     * override fun onResume(){
+     *
+     * super.onResume()
+     *
+     * nfcLib.onResumeRead(pendingIntent)
+     *
+     * }
      * @param pendingIntent
      */
     fun onResume(pendingIntent: PendingIntent?){
