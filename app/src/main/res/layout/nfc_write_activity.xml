@@ -21,15 +21,39 @@
             android:layout_marginBottom="32dp"
             />
 
+
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
-            android:text="Přiřaďte čip pro prvního hráče"
+            android:text="Write NFC message"
            android:id="@+id/textNfc"
             android:textSize="16sp"/>
 
+        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/radio_group"
+            android:orientation="vertical">
+            <RadioButton android:id="@+id/radio_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Write Text"/>
+            <RadioButton android:id="@+id/radio_url"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Write Url"/>
+        </RadioGroup>
 
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:hint="message"
+            android:inputType="text"/>
 
 
 
