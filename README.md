@@ -20,8 +20,9 @@ which are reading from NFC tag, writting text and writting URL.
 ```gradle
     implementation 'com.github.vojmahdal:Ez_NFC:1.0.1'
 ```
-techlist is 
+
 ## Create techlist.xml and add this code:
+Techlist is created for dealing with non-NDEF NFC Tags, so we need to specify, which NFC tags will be supported. 
 ```kotlin
     <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <tech-list>
