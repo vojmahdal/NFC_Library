@@ -53,39 +53,7 @@ class EzNfc(
 
     var nfcAdapter: NfcAdapter? = null
 
-    /**
-     * private function that verified, if device support NFC reader.
-     * this function verified, if NFC reader is enabled in settings as well
-     * function need two attributes, Context and NfcAdapter?
-     * Use this function in Activity, that works with NFC
-     * Use it in fun OnCreate after initialing IntentFilterArray in try statement
-     */
-    private fun support(){
-        try {
-            if (nfcAdapter == null) {
-                val builder = AlertDialog.Builder(activity.applicationContext, R.style.Dialog)
-                builder.setMessage("Does not support NFC")
-                builder.setPositiveButton("cancel", null)
-                val myDialog = builder.create()
-                myDialog.setCanceledOnTouchOutside(false)
-                myDialog.show()
-            } else if (!nfcAdapter!!.isEnabled) {
-                val builder = AlertDialog.Builder(activity.applicationContext, R.style.Dialog)
-                builder.setTitle("NFC disabled")
-                builder.setMessage("enable NFC")
-                builder.setPositiveButton("settings") { _, _ ->
-                    // startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
-                }
-                builder.setNegativeButton("cancel", null)
-                val myDialog = builder.create()
-                myDialog.setCanceledOnTouchOutside(false)
-                myDialog.show()
-            }
 
-        }catch (e: Exception){
-            Toast.makeText(activity.applicationContext, e.message, Toast.LENGTH_SHORT).show()
-        }
-    }
 
     /**
      * function is optional,  use in fun OnNewIntent(intent: Intent)
@@ -101,7 +69,7 @@ class EzNfc(
      * val read = NFCLib.read(pendingIntent)
      *
      * }
-     * @param intnt parse here pendingIntent
+     * @param intnt parse here Intent from parameter of fun onNewIntent
      * @return string message of NFC tag
      */
     fun read(intnt: Intent) : String{
@@ -137,7 +105,7 @@ class EzNfc(
      *
      * }
      *
-     * @param intnt parse here new intent
+     * @param intnt parse here Intent from parameter of fun onNewIntent
      *@param txt parse here message of type String
      */
     fun writeText(intnt: Intent, txt: String){
@@ -160,21 +128,6 @@ class EzNfc(
             Toast.makeText(activity.applicationContext, ex.message, Toast.LENGTH_SHORT).show()
         }
     }
-    private fun writeTextPrivate(){
-        val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG) ?: return
-        val ndef = Ndef.get(tag) ?: return
-
-        if(ndef.isWritable) {
-            var message = NdefMessage(
-                arrayOf(
-                    NdefRecord.createTextRecord("en", textMessage)
-                )
-            )
-            ndef.connect()
-            ndef.writeNdefMessage(message)
-            ndef.close()
-        }
-    }
 
     /**
      * function is optional, use in fun OnNewIntent(intent: Intent)
@@ -190,7 +143,7 @@ class EzNfc(
      *   nfcLib.writeUrl(intent, ""http://www.example.com"")
      *
      * }
-     * @param intnt parse here new intent
+     * @param intnt parse here Intent from parameter of fun onNewIntent
      * @param txt parse here message of type String, must be valid Url
      */
     fun writeUrl(intnt: Intent, txt: String){
@@ -225,38 +178,7 @@ class EzNfc(
         }else Toast.makeText(activity.applicationContext, "url is not valid", Toast.LENGTH_SHORT).show()
     }
 
-    /**
-     * function to check if url is valid
-     */
-    private fun checkUrl(): Boolean{
-        return URLUtil.isValidUrl(textMessage)
-    }
 
-    private fun readPrivate(){
-        val parcelables = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
-        with(parcelables){
-            try {
-                val inNdefMessage = this?.get(0) as NdefMessage
-                val inNdefRecord = inNdefMessage.records
-                val ndefRecord_0 = inNdefRecord[0]
-                val inMessage = String(ndefRecord_0.payload)
-
-                val nfcMessage = inMessage.drop(3)
-
-                outputMessage = nfcMessage
-
-            } catch (ex: Exception){
-                Toast.makeText(activity.applicationContext, "no data found", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    /**
-     * function to check write
-     */
-    private fun checkWriteText(): Boolean{
-        return outputMessage == textMessage
-    }
 
     /**
      * function is mandatory, use in fun onPause
@@ -319,23 +241,7 @@ class EzNfc(
         return intentFilterArray
     }
 
-    /**
-     * On resume read
-     *
-     * @param pendingIntent
-     */
-    fun onResumeRead(pendingIntent: PendingIntent?){
-        nfcAdapter?.enableForegroundDispatch(activity, pendingIntent, intentFilterArray, techListArray)
-    }
 
-    /**
-     * On resume write
-     *
-     * @param pendingIntent
-     */
-    fun onResumeWrite(pendingIntent: PendingIntent?){
-        nfcAdapter?.enableForegroundDispatch(activity, pendingIntent, intentFilterArray, techListArray)
-    }
 
     /**
      *  function is mandatory, use in fun onResume
@@ -349,12 +255,101 @@ class EzNfc(
      * nfcLib.onResumeRead(pendingIntent)
      *
      * }
-     * @param pendingIntent
+     * @param pendingIntent must be created in fun onCreate, FLAG of pendingIntent must be FLAG_ACTIVITY_SINGLE_TOP
      */
     fun onResume(pendingIntent: PendingIntent?){
         nfcAdapter?.enableForegroundDispatch(activity, pendingIntent, intentFilterArray, techListArray)
     }
 
 
+
+    /**
+     * private function that verified, if device support NFC reader.
+     * this function verified, if NFC reader is enabled in settings as well
+     * function need two attributes, Context and NfcAdapter?
+     * Use this function in Activity, that works with NFC
+     * Use it in fun OnCreate after initialing IntentFilterArray in try statement
+     */
+    private fun support(){
+        try {
+            if (nfcAdapter == null) {
+                val builder = AlertDialog.Builder(activity.applicationContext, R.style.Dialog)
+                builder.setMessage("Does not support NFC")
+                builder.setPositiveButton("cancel", null)
+                val myDialog = builder.create()
+                myDialog.setCanceledOnTouchOutside(false)
+                myDialog.show()
+            } else if (!nfcAdapter!!.isEnabled) {
+                val builder = AlertDialog.Builder(activity.applicationContext, R.style.Dialog)
+                builder.setTitle("NFC disabled")
+                builder.setMessage("enable NFC")
+                builder.setPositiveButton("settings") { _, _ ->
+                    // startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
+                }
+                builder.setNegativeButton("cancel", null)
+                val myDialog = builder.create()
+                myDialog.setCanceledOnTouchOutside(false)
+                myDialog.show()
+            }
+
+        }catch (e: Exception){
+            Toast.makeText(activity.applicationContext, e.message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    /**
+     * private fun used in public fun WriteText
+     */
+    private fun writeTextPrivate(){
+        val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG) ?: return
+        val ndef = Ndef.get(tag) ?: return
+
+        if(ndef.isWritable) {
+            var message = NdefMessage(
+                arrayOf(
+                    NdefRecord.createTextRecord("en", textMessage)
+                )
+            )
+            ndef.connect()
+            ndef.writeNdefMessage(message)
+            ndef.close()
+        }
+    }
+
+    /**
+     * function to check if url is valid
+     */
+    private fun checkUrl(): Boolean{
+        return URLUtil.isValidUrl(textMessage)
+    }
+
+    /**
+     * private fun used in public fun read
+     */
+    private fun readPrivate(){
+        val parcelables = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
+        with(parcelables){
+            try {
+                val inNdefMessage = this?.get(0) as NdefMessage
+                val inNdefRecord = inNdefMessage.records
+                val ndefRecord_0 = inNdefRecord[0]
+                val inMessage = String(ndefRecord_0.payload)
+
+                val nfcMessage = inMessage.drop(3)
+
+                outputMessage = nfcMessage
+
+            } catch (ex: Exception){
+                Toast.makeText(activity.applicationContext, "no data found", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    /**
+     * function to check if data are equal to
+     */
+    private fun checkWriteText(): Boolean{
+        return outputMessage == textMessage
+    }
 
 }

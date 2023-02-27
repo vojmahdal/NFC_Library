@@ -59,7 +59,7 @@ class NfcWriteActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-       nfcLib.onResumeWrite(pendingIntent)
+       nfcLib.onResume(pendingIntent)
     }
 
     override fun onNewIntent(intent: Intent) {

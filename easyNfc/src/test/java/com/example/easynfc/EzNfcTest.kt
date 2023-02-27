@@ -82,14 +82,10 @@ class EzNfcTest {
         createdFilter = libEzNfc.onCreateFilter()
         assertNotNull(createdFilter)
     }
+
     @Test
-    fun onResumeRead() = run{
+    fun onResume(){
         val pendingIntent = Mockito.mock(PendingIntent::class.java)
-        libEzNfc.onResumeRead(pendingIntent)
-    }
-    @Test
-    fun onResumeWrite() {
-        val pendingIntent = Mockito.mock(PendingIntent::class.java)
-        libEzNfc.onResumeWrite(pendingIntent)
+       libEzNfc.onResume(pendingIntent)
     }
 }

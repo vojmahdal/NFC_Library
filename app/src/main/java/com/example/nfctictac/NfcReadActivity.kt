@@ -21,7 +21,6 @@ class NfcReadActivity : AppCompatActivity() {
     }
 
     private var nfcLib = EzNfc( this, intentFilterArray = intentFilterArray)
-    //
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,27 +36,16 @@ class NfcReadActivity : AppCompatActivity() {
     }
         override fun onResume(){
             super.onResume()
-
-
-          //  EzNfc(intent, this, NfcAdapter.getDefaultAdapter(this), intentFilterArray).onResumeRead(pendingIntent)
-            nfcLib.onResumeRead(pendingIntent)
+            nfcLib.onResume(pendingIntent)
         }
 
     override fun onNewIntent(intent: Intent){
         super.onNewIntent(intent)
-
-        //nfcLib.intent = intent
-        //nfcLib.newIntent(intent)
-
-       // textView.text =    EzNfc(intent, this).builderRead()
-
-
           textView.text =  nfcLib.read(intent)
 
     }
 
     override fun onPause() {
-      // EzNfc(intent, this).onPause()
        nfcLib.onPause()
         super.onPause()
 
