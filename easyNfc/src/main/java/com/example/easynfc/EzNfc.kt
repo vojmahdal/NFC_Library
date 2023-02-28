@@ -51,6 +51,8 @@ class EzNfc(
      private var textMessage: String = ""
      private var outputMessage: String = ""
 
+    private var languageCode: String = "en"
+
     var nfcAdapter: NfcAdapter? = null
 
 
@@ -82,7 +84,6 @@ class EzNfc(
         else{
             Log.e("read_error", "Cannot read from NFC tag")
             Toast.makeText(activity.applicationContext, "cannot read from NFC", Toast.LENGTH_SHORT).show()
-           // toast( "cannot read from NFC")
         }
         return outputMessage
     }
@@ -111,17 +112,17 @@ class EzNfc(
     fun writeText(intnt: Intent, txt: String){
         intent = intnt
         textMessage = txt
+        outputMessage = ""
         try {
             if (NfcAdapter.ACTION_TECH_DISCOVERED == intent.action
                 || NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action
                 || NfcAdapter.ACTION_TAG_DISCOVERED == intent.action){
 
                 writeTextPrivate()
-                readPrivate()
                 if(checkWriteText()){
                     Toast.makeText(activity.applicationContext, "Successfully written", Toast.LENGTH_SHORT).show()
                 }else{
-                    Toast.makeText(activity.applicationContext, "NFC does not support write", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity.applicationContext, "Writing text on tag failed", Toast.LENGTH_SHORT).show()
                 }
             }
         }catch (ex: Exception){
@@ -273,25 +274,12 @@ class EzNfc(
     private fun support(){
         try {
             if (nfcAdapter == null) {
-                val builder = AlertDialog.Builder(activity.applicationContext, R.style.Dialog)
-                builder.setMessage("Does not support NFC")
-                builder.setPositiveButton("cancel", null)
-                val myDialog = builder.create()
-                myDialog.setCanceledOnTouchOutside(false)
-                myDialog.show()
+                Toast.makeText(activity.applicationContext,
+                    "Does not support NFC", Toast.LENGTH_SHORT).show()
             } else if (!nfcAdapter!!.isEnabled) {
-                val builder = AlertDialog.Builder(activity.applicationContext, R.style.Dialog)
-                builder.setTitle("NFC disabled")
-                builder.setMessage("enable NFC")
-                builder.setPositiveButton("settings") { _, _ ->
-                    // startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
-                }
-                builder.setNegativeButton("cancel", null)
-                val myDialog = builder.create()
-                myDialog.setCanceledOnTouchOutside(false)
-                myDialog.show()
+                Toast.makeText(activity.applicationContext,
+                    "NFC disabled, please enable NFC reading", Toast.LENGTH_SHORT).show()
             }
-
         }catch (e: Exception){
             Toast.makeText(activity.applicationContext, e.message, Toast.LENGTH_SHORT).show()
         }
@@ -307,11 +295,12 @@ class EzNfc(
         if(ndef.isWritable) {
             var message = NdefMessage(
                 arrayOf(
-                    NdefRecord.createTextRecord("en", textMessage)
+                    NdefRecord.createTextRecord(languageCode, textMessage)
                 )
             )
             ndef.connect()
             ndef.writeNdefMessage(message)
+            outputMessage = textMessage
             ndef.close()
         }
     }
@@ -350,6 +339,10 @@ class EzNfc(
      */
     private fun checkWriteText(): Boolean{
         return outputMessage == textMessage
+    }
+
+    fun setLanguageCode(code: String){
+        languageCode = code
     }
 
 }
