@@ -18,25 +18,8 @@ import android.widget.Toast
 
 /**
  * Library class for NFC
- * use it in your class of Activity
  *
- *example:
- *
- * class ExampleActivity : AppCompatActivity() {
- *
- *private var intentFilterArray: Array<IntentFilter>? = null
- *
- *private var pendingIntent: PendingIntent? = null
- *
- *private val nfcAdapter: NfcAdapter? by lazy {
- *
- *   NfcAdapter.getDefaultAdapter(this)
- *
- *}
- *
- * private var nfcLib = EzNfc(this, intentFilterArray)
- *
- * ...
+ * use it in your Activity class
  * @property activity actual Activity
  * @property intentFilterArray create new intentFilterArray in activity
  * @constructor Create instance of Ez nfc
@@ -62,15 +45,6 @@ class EzNfc(
      *
      * function is for reading data from NFC tag
      *
-     * example:
-     *
-     * override fun onNewIntent(intent: Intent){
-     *
-     * super.onNewIntent(intent)
-     *
-     * val read = NFCLib.read(pendingIntent)
-     *
-     * }
      * @param intnt parse here Intent from parameter of fun onNewIntent
      * @return string message of NFC tag
      */
@@ -95,16 +69,6 @@ class EzNfc(
      * function is optional,  use in fun OnNewIntent(intent: Intent)
      *
      * function is for writing data of text into NFC tag
-     *
-     * example:
-     *
-     *  override fun onNewIntent(intent: Intent) {
-     *
-     *  super.onNewIntent(intent)
-     *
-     *   nfcLib.writeText(intent, "example")
-     *
-     * }
      *
      * @param intnt parse here Intent from parameter of fun onNewIntent
      *@param txt parse here message of type String
@@ -135,15 +99,6 @@ class EzNfc(
      *
      * function is for writing data of url into NFC tag
      *
-     * example:
-     *
-     *  override fun onNewIntent(intent: Intent) {
-     *
-     *  super.onNewIntent(intent)
-     *
-     *   nfcLib.writeUrl(intent, ""http://www.example.com"")
-     *
-     * }
      * @param intnt parse here Intent from parameter of fun onNewIntent
      * @param txt parse here message of type String, must be valid Url
      */
@@ -184,15 +139,6 @@ class EzNfc(
     /**
      * function is mandatory, use in fun onPause
      *
-     * example:
-     *
-     * override fun onPause() {
-     *
-     * nfcLib.onPause()
-     *
-     * super.onPause()
-     *
-     *   }
      */
     fun onPause(){
         if(activity.isFinishing){
@@ -201,27 +147,8 @@ class EzNfc(
     }
 
     /**
-     * On create filter
-     *
-     * example:
-     *
-     *  override fun onCreate(savedInstanceState: Bundle?) {
-     *
-     *super.onCreate(savedInstanceState)
-     *
-     *setContentView(R.layout.nfc_read_activity)
-     *
-     *textView = findViewById(R.id.txtviewmachineid)
-     *
-     *nfcLib.nfcAdapter = nfcAdapter
-     *
-     *pendingIntent = PendingIntent.getActivity(this, 0,
-     *
-     * Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
-     *
-     *intentFilterArray = nfcLib.onCreateFilter()
-     *
-     * }
+     * method onCreateFilter is used
+     * to assign the created variable of class Activity
      *
      * @return intentFilterArray, for used Activity
      */
@@ -247,15 +174,6 @@ class EzNfc(
     /**
      *  function is mandatory, use in fun onResume
      *
-     * example:
-     *
-     * override fun onResume(){
-     *
-     * super.onResume()
-     *
-     * nfcLib.onResumeRead(pendingIntent)
-     *
-     * }
      * @param pendingIntent must be created in fun onCreate, FLAG of pendingIntent must be FLAG_ACTIVITY_SINGLE_TOP
      */
     fun onResume(pendingIntent: PendingIntent?){
@@ -335,12 +253,19 @@ class EzNfc(
     }
 
     /**
-     * function to check if data are equal to
+     * function to check if data are equal to input data
      */
     private fun checkWriteText(): Boolean{
         return outputMessage == textMessage
     }
 
+    /**
+     * function to set language code for function to write text
+     *
+     * default code is "en", but it can be changed
+     *
+     * @param code insert here string code of language you want to use
+     */
     fun setLanguageCode(code: String){
         languageCode = code
     }
