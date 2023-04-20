@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.nfctictac">
+
+
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+
 <uses-permission android:name="android.permission.NFC"/>
 <uses-permission android:name="android.permission.VIBRATE" />
 <uses-feature android:name="android.hardware.nfc" android:required="true"/>
@@ -49,7 +55,7 @@
         <activity android:name=".NfcWriteActivity"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+
                 <action android:name="android.nfc.action.TAG_DISCOVERED" />
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
             </intent-filter>

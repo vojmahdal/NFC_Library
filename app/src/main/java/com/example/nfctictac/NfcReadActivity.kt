@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
 import android.nfc.NfcAdapter
+import android.os.Build
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -29,9 +30,13 @@ class NfcReadActivity : AppCompatActivity() {
 
         nfcLib.nfcAdapter = nfcAdapter
 
-        pendingIntent = PendingIntent.getActivity(this, 0,
-            Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
-
+        if (Build.VERSION.SDK_INT < 30){
+            pendingIntent = PendingIntent.getActivity(this, 0,
+                Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)}
+        else {
+            pendingIntent = PendingIntent.getActivity(this, 0,
+                Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_MUTABLE)
+        }
             intentFilterArray = nfcLib.onCreateFilter()
     }
         override fun onResume(){

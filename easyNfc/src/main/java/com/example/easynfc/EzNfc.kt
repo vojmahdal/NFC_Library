@@ -14,6 +14,7 @@ import android.nfc.tech.NfcF
 import android.util.Log
 import android.webkit.URLUtil
 import android.widget.Toast
+import java.nio.charset.Charset
 
 
 /**
@@ -106,33 +107,160 @@ class EzNfc(
         intent = intnt
         textMessage = txt
         if (checkUrl()){
-            try {
-                if (NfcAdapter.ACTION_TECH_DISCOVERED == intent.action
-                    || NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action
-                    || NfcAdapter.ACTION_TAG_DISCOVERED == intent.action){
-                    val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG) ?: return
-                    val ndef = Ndef.get(tag) ?: return
-
-                    if(ndef.isWritable){
-                        var message = NdefMessage(
-                            arrayOf(
-                                NdefRecord.createUri(textMessage)
-                            )
-                        )
-                        ndef.connect()
-                        ndef.writeNdefMessage(message)
-                        ndef.close()
-
-                        Toast.makeText(activity.applicationContext, "Successfully written", Toast.LENGTH_SHORT).show()
-                    }else{
-                        Toast.makeText(activity.applicationContext, "NFC does not support write", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }catch (ex: Exception){
-                Toast.makeText(activity.applicationContext, ex.message, Toast.LENGTH_SHORT).show()
-            }
+           writeUri(textMessage)
         }else Toast.makeText(activity.applicationContext, "url is not valid", Toast.LENGTH_SHORT).show()
     }
+
+
+    /**
+     * function is optional, use in fun OnNewIntent(intent: Intent)
+     *
+     * function is for writing data of url into NFC tag
+     *
+     * @param intnt parse here Intent from parameter of fun onNewIntent
+     * @param email parse here message of type String, must be valid email address
+     */
+    fun writeEmailAddress(intnt: Intent, email: String) {
+        intent = intnt
+        textMessage = email
+        val uriMessage = "mailto:${email}"
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$"
+        if(email.matches(emailRegex.toRegex())) {
+            writeUri(uriMessage)
+        } else{
+            Toast.makeText(activity.applicationContext, "format of e-mail is not valid", Toast.LENGTH_SHORT)
+        }
+    }
+
+
+    /**
+     * function is optional, use in fun OnNewIntent(intent: Intent)
+     *
+     * function is for writing Email message
+     *
+     * @param intnt parse here Intent from parameter of fun onNewIntent
+     * @param email parse here email of reciver of type String, must be valid email address
+     * @param subject parse here subject for receiver of type String
+     * @param mailMessage parse here message for receiver of type String
+     */
+    fun writeEmailMessage(intnt: Intent, email: String, subject: String, mailMessage: String) {
+        intent = intnt
+        textMessage = email
+
+        val uriMessage = "mailto:${email}" +
+                "?subject=${subject}&body=${mailMessage}"
+
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$"
+        if(email.matches(emailRegex.toRegex())) {
+           writeUri(uriMessage)
+        } else{
+            Toast.makeText(activity.applicationContext, "format of e-mail is not valid", Toast.LENGTH_SHORT)
+        }
+    }
+
+    /**
+     * function is optional, use in fun OnNewIntent(intent: Intent)
+     *
+     * function is for writing data of url into NFC tag
+     *
+     * @param intnt parse here Intent from parameter of fun onNewIntent
+     * @param email parse here message of type String, must be valid email address
+     */
+    fun writeTelNumber(intnt: Intent, telNumber: String) {
+        intent = intnt
+        val uriMessage = "tel:${telNumber}"
+
+        val telRegex = "^[0-9\\-\\+]{9,15}\$"
+        if(telNumber.matches(telRegex.toRegex())) {
+            writeUri(uriMessage)
+        } else{
+            Toast.makeText(activity.applicationContext, "format of e-mail is not valid", Toast.LENGTH_SHORT)
+        }
+    }
+
+    /**
+     * function is optional, use in fun OnNewIntent(intent: Intent)
+     *
+     * function is for writing data of url into NFC tag
+     *
+     * @param intnt parse here Intent from parameter of fun onNewIntent
+     * @param telNumber parse here telephone number of type String, must be valid telephone number
+     * @param message parse here body of sms message
+     */
+    fun writeSms(intnt: Intent, telNumber: String, message: String) {
+        intent = intnt
+        textMessage = telNumber
+        val uriMessage = "sms:${telNumber}?body=${message}"
+        val telRegex = "^[0-9\\-\\+]{9,15}\$"
+        if(telNumber.matches(telRegex.toRegex())) {
+            writeUri(uriMessage)
+        } else{
+            Toast.makeText(activity.applicationContext, "format of e-mail is not valid", Toast.LENGTH_SHORT)
+        }
+    }
+
+    /**
+     * function is optional, use in fun OnNewIntent(intent: Intent)
+     *
+     * function is for writing data of url into NFC tag
+     *
+     * @param intnt parse here Intent from parameter of fun onNewIntent
+     * @param lat parse here latitude
+     * @param long parse here longitude
+     */
+    fun writeLocation(intnt: Intent, lat: String, long: String) {
+        intent = intnt
+
+        val uriMessage = "geo:${lat},${long}"
+        val latRegex = "^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,6})?))\$"
+        val longRegex = "^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,6})?))\$"
+
+         if(lat.matches(latRegex.toRegex()) and long.matches(longRegex.toRegex())) {
+            writeUri(uriMessage)
+        } else{
+            Toast.makeText(activity.applicationContext, "format of latitude, or longitude is not valid", Toast.LENGTH_SHORT)
+        }
+    }
+
+
+    private fun writeUri(uri: String){
+        try {
+            if (NfcAdapter.ACTION_TECH_DISCOVERED == intent.action
+                || NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action
+                || NfcAdapter.ACTION_TAG_DISCOVERED == intent.action
+            ) {
+                val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG) ?: return
+                val ndef = Ndef.get(tag) ?: return
+
+                if (ndef.isWritable) {
+                    val message = NdefMessage(
+                        arrayOf(
+                            NdefRecord.createUri(uri)
+                        )
+                    )
+                    ndef.connect()
+                    ndef.writeNdefMessage(message)
+                    ndef.close()
+
+                    Toast.makeText(
+                        activity.applicationContext,
+                        "Successfully written",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    Toast.makeText(
+                        activity.applicationContext,
+                        "NFC does not support write",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        } catch (ex: Exception) {
+            Toast.makeText(activity.applicationContext, ex.message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
 
 
 
@@ -141,9 +269,9 @@ class EzNfc(
      *
      */
     fun onPause(){
-        if(activity.isFinishing){
+      //  if(activity.isFinishing){
             nfcAdapter?.disableForegroundDispatch(activity)
-        }
+        //}
     }
 
     /**
@@ -251,6 +379,7 @@ class EzNfc(
             }
         }
     }
+
 
     /**
      * function to check if data are equal to input data

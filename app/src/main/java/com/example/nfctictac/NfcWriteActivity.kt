@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
 import android.nfc.NfcAdapter
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -35,6 +36,7 @@ class NfcWriteActivity : AppCompatActivity() {
         val radioGroup = findViewById<RadioGroup>(R.id.radio_group)
         val radioText = findViewById<RadioButton>(R.id.radio_text)
         val radioUrl = findViewById<RadioButton>(R.id.radio_url)
+        val radioMail = findViewById<RadioButton>(R.id.radio_mail)
 
 
 
@@ -45,15 +47,23 @@ class NfcWriteActivity : AppCompatActivity() {
                     operation = "text"
                 }else if(radioUrl.isChecked){
                     operation = "url"
-                } else{
+                }
+                else if(radioMail.isChecked){
+                    operation = "mail"
+                }
+                else{
                     operation = "text"
                 }
             })
 
         nfcLib.nfcAdapter = nfcAdapter
-
+        if (Build.VERSION.SDK_INT < 30){
         pendingIntent = PendingIntent.getActivity(this, 0,
-            Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)
+            Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)}
+        else {
+            pendingIntent = PendingIntent.getActivity(this, 0,
+                Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_MUTABLE)
+        }
         intentFilterArray = nfcLib.onCreateFilter()
     }
 
@@ -71,7 +81,11 @@ class NfcWriteActivity : AppCompatActivity() {
                 nfcLib.writeText(intent, nfcText.text.toString())
             } else if (operation == "url") {
                 nfcLib.writeUrl(intent, nfcText.text.toString())
-            } else {
+            }
+            else if (operation == "mail") {
+                nfcLib.writeEmailAddress(intent, nfcText.text.toString())
+            }
+            else {
                 Toast.makeText(this, "select operation", Toast.LENGTH_SHORT).show()
             }
         }
