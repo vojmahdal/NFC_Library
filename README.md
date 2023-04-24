@@ -82,7 +82,8 @@ Techlist is created for dealing with non-NDEF NFC Tags, so we need to specify, w
                     Intent(this, javaClass)
                     .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
                     0)
-         intentFilterArray = nfcLib.onCreateFilter()
+         intentFilterArray = nfcLib.onCreateFilterRead()
+         //if you use activity to write tag, use onCreateFilterWrite()
          
 ```
  ## in fun onResume use EzNFC onResume with parameter of your pending Intent:
@@ -93,9 +94,9 @@ Techlist is created for dealing with non-NDEF NFC Tags, so we need to specify, w
 ```kotlin
         nfcLib.onPause()
 ```
-## in fun onNewIntent(intent: Intent) add operation of NFC: read, writeText or writeUrl (example of write):
+## in fun onNewIntent(intent: Intent) add operation of NFC (example of write plain text):
 ```kotlin
       nfcLib.writeText(intent, "text")
 ```  
 ## documentation 
- [Open full documentation of NFC Library](https://akela.mendelu.cz/~xmahdal/EzNFCDoc/ "EzNFC's Documentation")
+ [Open full documentation of NFC Library](http://eznfc.maweb.eu/ "EzNFC's Documentation")
