@@ -99,4 +99,4 @@ Techlist is created for dealing with non-NDEF NFC Tags, so we need to specify, w
       nfcLib.writeText(intent, "text")
 ```  
 ## documentation 
- [Open full documentation of NFC Library](http://eznfc.maweb.eu/ "EzNFC's Documentation")
+ [Open full documentation of NFC Library](http://eznfc.maweb.eu/html "EzNFC's Documentation")
