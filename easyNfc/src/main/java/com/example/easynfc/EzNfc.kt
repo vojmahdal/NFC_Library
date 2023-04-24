@@ -10,6 +10,7 @@ import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.Ndef
+import android.nfc.tech.NdefFormatable
 import android.nfc.tech.NfcF
 import android.util.Log
 import android.webkit.URLUtil
@@ -42,9 +43,9 @@ class EzNfc(
 
 
     /**
-     * function is optional,  use in fun OnNewIntent(intent: Intent)
+     * function is optional, use in fun OnNewIntent(intent: Intent)
      *
-     * function is for reading data from NFC tag
+     * function is for reading text from NFC tag
      *
      * @param intnt parse here Intent from parameter of fun onNewIntent
      * @return string message of NFC tag
@@ -69,7 +70,7 @@ class EzNfc(
     /**
      * function is optional,  use in fun OnNewIntent(intent: Intent)
      *
-     * function is for writing data of text into NFC tag
+     * function is for writing plain text into NFC tag
      *
      * @param intnt parse here Intent from parameter of fun onNewIntent
      *@param txt parse here message of type String
@@ -115,7 +116,7 @@ class EzNfc(
     /**
      * function is optional, use in fun OnNewIntent(intent: Intent)
      *
-     * function is for writing data of url into NFC tag
+     * function is for writing email address into NFC tag
      *
      * @param intnt parse here Intent from parameter of fun onNewIntent
      * @param email parse here message of type String, must be valid email address
@@ -136,7 +137,7 @@ class EzNfc(
     /**
      * function is optional, use in fun OnNewIntent(intent: Intent)
      *
-     * function is for writing Email message
+     * function is for writing Email message into NFC tag
      *
      * @param intnt parse here Intent from parameter of fun onNewIntent
      * @param email parse here email of reciver of type String, must be valid email address
@@ -161,7 +162,7 @@ class EzNfc(
     /**
      * function is optional, use in fun OnNewIntent(intent: Intent)
      *
-     * function is for writing data of url into NFC tag
+     * function is for writing telephone number into NFC tag
      *
      * @param intnt parse here Intent from parameter of fun onNewIntent
      * @param email parse here message of type String, must be valid email address
@@ -181,7 +182,7 @@ class EzNfc(
     /**
      * function is optional, use in fun OnNewIntent(intent: Intent)
      *
-     * function is for writing data of url into NFC tag
+     * function is for writing telephone number with sms message into NFC tag
      *
      * @param intnt parse here Intent from parameter of fun onNewIntent
      * @param telNumber parse here telephone number of type String, must be valid telephone number
@@ -202,7 +203,8 @@ class EzNfc(
     /**
      * function is optional, use in fun OnNewIntent(intent: Intent)
      *
-     * function is for writing data of url into NFC tag
+     * function is for writing data of geolocation into NFC tag
+     * It is needed to add two parameters, latitude and longitude
      *
      * @param intnt parse here Intent from parameter of fun onNewIntent
      * @param lat parse here latitude
@@ -261,9 +263,6 @@ class EzNfc(
     }
 
 
-
-
-
     /**
      * function is mandatory, use in fun onPause
      *
@@ -278,9 +277,11 @@ class EzNfc(
      * method onCreateFilter is used
      * to assign the created variable of class Activity
      *
+     * Use in Activity for reading text from NFC tag
+     *
      * @return intentFilterArray, for used Activity
      */
-    fun onCreateFilter(): Array<IntentFilter>?{
+    fun onCreateFilterRead(): Array<IntentFilter>?{
 
         val ndef = IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED)
         try {
@@ -292,12 +293,33 @@ class EzNfc(
             intentFilterArray = arrayOf(ndef)
             support()
         }catch (e: Exception){
-//            Toast.makeText(activity.applicationContext, e.message, Toast.LENGTH_SHORT).show()
-        }
+            Log.e("intentfilter", "intent filter is null")
+       }
         return intentFilterArray
     }
 
 
+    /**
+     * method onCreateFilter is used
+     * to assign the created variable of class Activity
+     *
+     * Use in Activity for writing data into NFC tag
+     *
+     * @return intentFilterArray, for used Activity
+     */
+    fun onCreateFilterWrite(): Array<IntentFilter>?{
+        try {
+            intentFilterArray = arrayOf(
+                IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED),
+                IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED),
+            IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED)
+            )
+            support()
+        }catch (e: Exception){
+            Log.e("intentfilter", "intent filter is null")
+        }
+        return intentFilterArray
+    }
 
     /**
      *  function is mandatory, use in fun onResume

@@ -57,14 +57,17 @@ class NfcWriteActivity : AppCompatActivity() {
             })
 
         nfcLib.nfcAdapter = nfcAdapter
+        val intent = Intent(this, javaClass).apply {
+            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        }
         if (Build.VERSION.SDK_INT < 30){
         pendingIntent = PendingIntent.getActivity(this, 0,
             Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)}
         else {
             pendingIntent = PendingIntent.getActivity(this, 0,
-                Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_MUTABLE)
+                intent, PendingIntent.FLAG_MUTABLE)
         }
-        intentFilterArray = nfcLib.onCreateFilter()
+        intentFilterArray = nfcLib.onCreateFilterWrite()
     }
 
     override fun onResume() {

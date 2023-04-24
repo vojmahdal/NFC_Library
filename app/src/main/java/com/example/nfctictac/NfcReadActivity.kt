@@ -37,7 +37,7 @@ class NfcReadActivity : AppCompatActivity() {
             pendingIntent = PendingIntent.getActivity(this, 0,
                 Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_MUTABLE)
         }
-            intentFilterArray = nfcLib.onCreateFilter()
+            intentFilterArray = nfcLib.onCreateFilterRead()
     }
         override fun onResume(){
             super.onResume()
