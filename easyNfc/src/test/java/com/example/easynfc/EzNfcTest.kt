@@ -77,9 +77,16 @@ class EzNfcTest {
 
 
     @Test
-    fun onCreateFilter() {
+    fun onCreateFilterRead() {
         var createdFilter: Array<IntentFilter>? = null
-        createdFilter = libEzNfc.onCreateFilter()
+        createdFilter = libEzNfc.onCreateFilterRead()
+        assertNotNull(createdFilter)
+    }
+
+    @Test
+    fun onCreateFilterWrite() {
+        var createdFilter: Array<IntentFilter>? = null
+        createdFilter = libEzNfc.onCreateFilterWrite()
         assertNotNull(createdFilter)
     }
 

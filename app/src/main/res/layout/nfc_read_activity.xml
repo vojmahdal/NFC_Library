@@ -13,7 +13,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
             android:textStyle="bold"
-            android:text="Machine ID will be here!"
+            android:text="Tap on NFC tag to read"
 
             android:id="@+id/txtviewmachineid"
             android:textSize="20sp"/>

@@ -1,7 +1,6 @@
 package com.example.easynfc
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
@@ -10,12 +9,10 @@ import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.Ndef
-import android.nfc.tech.NdefFormatable
 import android.nfc.tech.NfcF
 import android.util.Log
 import android.webkit.URLUtil
 import android.widget.Toast
-import java.nio.charset.Charset
 
 
 /**
@@ -63,9 +60,7 @@ class EzNfc(
         }
         return outputMessage
     }
-    private fun toast(text: String){
-        Toast.makeText(activity.applicationContext, text, Toast.LENGTH_SHORT).show()
-    }
+
 
     /**
      * function is optional,  use in fun OnNewIntent(intent: Intent)
@@ -109,7 +104,8 @@ class EzNfc(
         textMessage = txt
         if (checkUrl()){
            writeUri(textMessage)
-        }else Toast.makeText(activity.applicationContext, "url is not valid", Toast.LENGTH_SHORT).show()
+        }else Toast.makeText(activity.applicationContext,
+            "url is not valid", Toast.LENGTH_SHORT).show()
     }
 
 
@@ -129,7 +125,7 @@ class EzNfc(
         if(email.matches(emailRegex.toRegex())) {
             writeUri(uriMessage)
         } else{
-            Toast.makeText(activity.applicationContext, "format of e-mail is not valid", Toast.LENGTH_SHORT)
+            Toast.makeText(activity.applicationContext, "format of e-mail is not valid", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -155,7 +151,7 @@ class EzNfc(
         if(email.matches(emailRegex.toRegex())) {
            writeUri(uriMessage)
         } else{
-            Toast.makeText(activity.applicationContext, "format of e-mail is not valid", Toast.LENGTH_SHORT)
+            Toast.makeText(activity.applicationContext, "format of e-mail is not valid", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -175,7 +171,8 @@ class EzNfc(
         if(telNumber.matches(telRegex.toRegex())) {
             writeUri(uriMessage)
         } else{
-            Toast.makeText(activity.applicationContext, "format of e-mail is not valid", Toast.LENGTH_SHORT)
+            Toast.makeText(activity.applicationContext,
+                "format of telephone is not valid", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -196,7 +193,8 @@ class EzNfc(
         if(telNumber.matches(telRegex.toRegex())) {
             writeUri(uriMessage)
         } else{
-            Toast.makeText(activity.applicationContext, "format of e-mail is not valid", Toast.LENGTH_SHORT)
+            Toast.makeText(activity.applicationContext,
+                "format of telephone is not valid", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -220,7 +218,8 @@ class EzNfc(
          if(lat.matches(latRegex.toRegex()) and long.matches(longRegex.toRegex())) {
             writeUri(uriMessage)
         } else{
-            Toast.makeText(activity.applicationContext, "format of latitude, or longitude is not valid", Toast.LENGTH_SHORT)
+            Toast.makeText(activity.applicationContext,
+                "format of latitude, or longitude is not valid", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -268,9 +267,7 @@ class EzNfc(
      *
      */
     fun onPause(){
-      //  if(activity.isFinishing){
             nfcAdapter?.disableForegroundDispatch(activity)
-        //}
     }
 
     /**
@@ -401,7 +398,6 @@ class EzNfc(
             }
         }
     }
-
 
     /**
      * function to check if data are equal to input data
