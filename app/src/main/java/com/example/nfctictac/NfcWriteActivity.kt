@@ -18,22 +18,22 @@ class NfcWriteActivity : AppCompatActivity() {
     private var pendingIntent: PendingIntent? = null
 
 
-    private lateinit var textView : TextView
+    private lateinit var textView: TextView
 
     private lateinit var nfcText: EditText
-    private lateinit var secText : EditText
-    private lateinit var thirdText : EditText
+    private lateinit var secText: EditText
+    private lateinit var thirdText: EditText
 
     private val nfcAdapter: NfcAdapter? by lazy {
         NfcAdapter.getDefaultAdapter(this)
     }
-    private var nfcLib = EzNfc( this, intentFilterArray = intentFilterArray)
+    private var nfcLib = EzNfc(this, intentFilterArray = intentFilterArray)
 
     private var operation = "text"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-     //   supportActionBar?.hide()
+        //   supportActionBar?.hide()
         setContentView(R.layout.nfc_write_activity)
         textView = findViewById(R.id.textNfc)
         nfcText = findViewById(R.id.editText)
@@ -53,49 +53,42 @@ class NfcWriteActivity : AppCompatActivity() {
 
 
         radioGroup.setOnCheckedChangeListener(
-            RadioGroup.OnCheckedChangeListener{
-                group, id ->
-                if(radioText.isChecked){
+            RadioGroup.OnCheckedChangeListener { group, id ->
+                if (radioText.isChecked) {
                     secText.visibility = View.GONE
                     thirdText.visibility = View.GONE
                     operation = "text"
                     nfcText.hint = "text"
-                }else if(radioUrl.isChecked){
+                } else if (radioUrl.isChecked) {
                     secText.visibility = View.GONE
                     thirdText.visibility = View.GONE
                     operation = "url"
                     nfcText.hint = "valid url"
-                }
-                else if (radioMailAddress.isChecked){
+                } else if (radioMailAddress.isChecked) {
                     secText.visibility = View.GONE
                     thirdText.visibility = View.GONE
                     operation = "mailAddress"
                     nfcText.hint = "mail Address"
-                }
-                else if(radioMail.isChecked){
+                } else if (radioMail.isChecked) {
                     secText.visibility = View.VISIBLE
                     thirdText.visibility = View.VISIBLE
                     nfcText.hint = "Receiver"
                     secText.hint = "Subject"
                     thirdText.hint = "Message"
                     operation = "mail"
-                }
-
-                else if (radioGeo.isChecked){
+                } else if (radioGeo.isChecked) {
                     secText.visibility = View.VISIBLE
                     thirdText.visibility = View.GONE
                     nfcText.hint = "latitude"
                     secText.hint = "longitude"
                     operation = "geo"
-                }
-                else if (radioSms.isChecked){
+                } else if (radioSms.isChecked) {
                     secText.visibility = View.VISIBLE
                     thirdText.visibility = View.GONE
                     nfcText.hint = "telephone number"
                     secText.hint = "message"
                     operation = "sms"
-                }
-                else{
+                } else {
                     operation = "text"
                 }
             })
@@ -104,52 +97,53 @@ class NfcWriteActivity : AppCompatActivity() {
         val intent = Intent(this, javaClass).apply {
             addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
-        if (Build.VERSION.SDK_INT < 30){
-        pendingIntent = PendingIntent.getActivity(this, 0,
-            Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)}
-        else {
-            pendingIntent = PendingIntent.getActivity(this, 0,
-                intent, PendingIntent.FLAG_MUTABLE)
+        if (Build.VERSION.SDK_INT < 30) {
+            pendingIntent = PendingIntent.getActivity(
+                this, 0,
+                Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0
+            )
+        } else {
+            pendingIntent = PendingIntent.getActivity(
+                this, 0,
+                intent, PendingIntent.FLAG_MUTABLE
+            )
         }
         intentFilterArray = nfcLib.onCreateFilterWrite()
     }
 
     override fun onResume() {
         super.onResume()
-       nfcLib.onResume(pendingIntent)
+        nfcLib.onResume(pendingIntent)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if(nfcText.text.isNullOrEmpty()){
+        if (nfcText.text.isNullOrEmpty()) {
             Toast.makeText(this, "message cannot be empty", Toast.LENGTH_SHORT).show()
-        }else {
+        } else {
             if (operation == "text") {
                 nfcLib.writeText(intent, nfcText.text.toString())
             } else if (operation == "url") {
                 nfcLib.writeUrl(intent, nfcText.text.toString())
-            }
-            else if (operation == "mailAddress") {
+            } else if (operation == "mailAddress") {
                 nfcLib.writeEmailAddress(intent, nfcText.text.toString())
-            }
-            else if (operation == "mail") {
-                nfcLib.writeEmailMessage(intent, nfcText.text.toString(), secText.text.toString(),
-                thirdText.text.toString())
-            }
-            else if (operation == "sms") {
+            } else if (operation == "mail") {
+                nfcLib.writeEmailMessage(
+                    intent, nfcText.text.toString(), secText.text.toString(),
+                    thirdText.text.toString()
+                )
+            } else if (operation == "sms") {
                 nfcLib.writeSms(intent, nfcText.text.toString(), secText.text.toString())
-            }
-            else if (operation == "geo") {
+            } else if (operation == "geo") {
                 nfcLib.writeLocation(intent, nfcText.text.toString(), secText.text.toString())
-            }
-            else {
+            } else {
                 Toast.makeText(this, "select operation", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     override fun onPause() {
-     nfcLib.onPause()
+        nfcLib.onPause()
         super.onPause()
     }
 

@@ -26,17 +26,16 @@ import android.widget.Toast
 class EzNfc(
     private var activity: Activity,
     private var intentFilterArray: Array<IntentFilter>? = null
-){
+) {
     private lateinit var intent: Intent
     private val techListArray = arrayOf(arrayOf(NfcF::class.java.name))
 
-     private var textMessage: String = ""
-     private var outputMessage: String = ""
+    private var textMessage: String = ""
+    private var outputMessage: String = ""
 
     private var languageCode: String = "en"
 
     var nfcAdapter: NfcAdapter? = null
-
 
 
     /**
@@ -47,16 +46,19 @@ class EzNfc(
      * @param intnt parse here Intent from parameter of fun onNewIntent
      * @return string message of NFC tag
      */
-    fun read(intnt: Intent) : String{
+    fun read(intnt: Intent): String {
         intent = intnt
         outputMessage = ""
         val action = intent.action
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED == action){
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED == action ||
+            NfcAdapter.ACTION_TAG_DISCOVERED == action ||
+            NfcAdapter.ACTION_TECH_DISCOVERED == action
+        ) {
             readPrivate()
-        }
-        else{
+        } else {
             Log.e("read_error", "Cannot read from NFC tag")
-            Toast.makeText(activity.applicationContext, "cannot read from NFC", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity.applicationContext, "cannot read from NFC", Toast.LENGTH_SHORT)
+                .show()
         }
         return outputMessage
     }
@@ -70,23 +72,32 @@ class EzNfc(
      * @param intnt parse here Intent from parameter of fun onNewIntent
      *@param txt parse here message of type String
      */
-    fun writeText(intnt: Intent, txt: String){
+    fun writeText(intnt: Intent, txt: String) {
         intent = intnt
         textMessage = txt
         outputMessage = ""
         try {
             if (NfcAdapter.ACTION_TECH_DISCOVERED == intent.action
                 || NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action
-                || NfcAdapter.ACTION_TAG_DISCOVERED == intent.action){
+                || NfcAdapter.ACTION_TAG_DISCOVERED == intent.action
+            ) {
 
                 writeTextPrivate()
-                if(checkWriteText()){
-                    Toast.makeText(activity.applicationContext, "Successfully written", Toast.LENGTH_SHORT).show()
-                }else{
-                    Toast.makeText(activity.applicationContext, "Writing text on tag failed", Toast.LENGTH_SHORT).show()
+                if (checkWriteText()) {
+                    Toast.makeText(
+                        activity.applicationContext,
+                        "Successfully written",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    Toast.makeText(
+                        activity.applicationContext,
+                        "Writing text on tag failed",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
-        }catch (ex: Exception){
+        } catch (ex: Exception) {
             Toast.makeText(activity.applicationContext, ex.message, Toast.LENGTH_SHORT).show()
         }
     }
@@ -99,13 +110,15 @@ class EzNfc(
      * @param intnt parse here Intent from parameter of fun onNewIntent
      * @param txt parse here message of type String, must be valid Url
      */
-    fun writeUrl(intnt: Intent, txt: String){
+    fun writeUrl(intnt: Intent, txt: String) {
         intent = intnt
         textMessage = txt
-        if (checkUrl()){
-           writeUri(textMessage)
-        }else Toast.makeText(activity.applicationContext,
-            "url is not valid", Toast.LENGTH_SHORT).show()
+        if (checkUrl()) {
+            writeUri(textMessage)
+        } else Toast.makeText(
+            activity.applicationContext,
+            "url is not valid", Toast.LENGTH_SHORT
+        ).show()
     }
 
 
@@ -122,10 +135,14 @@ class EzNfc(
         textMessage = email
         val uriMessage = "mailto:${email}"
         val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$"
-        if(email.matches(emailRegex.toRegex())) {
+        if (email.matches(emailRegex.toRegex())) {
             writeUri(uriMessage)
-        } else{
-            Toast.makeText(activity.applicationContext, "format of e-mail is not valid", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(
+                activity.applicationContext,
+                "format of e-mail is not valid",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -148,10 +165,14 @@ class EzNfc(
                 "?subject=${subject}&body=${mailMessage}"
 
         val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$"
-        if(email.matches(emailRegex.toRegex())) {
-           writeUri(uriMessage)
-        } else{
-            Toast.makeText(activity.applicationContext, "format of e-mail is not valid", Toast.LENGTH_SHORT).show()
+        if (email.matches(emailRegex.toRegex())) {
+            writeUri(uriMessage)
+        } else {
+            Toast.makeText(
+                activity.applicationContext,
+                "format of e-mail is not valid",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -168,11 +189,13 @@ class EzNfc(
         val uriMessage = "tel:${telNumber}"
 
         val telRegex = "^[0-9\\-\\+]{9,15}\$"
-        if(telNumber.matches(telRegex.toRegex())) {
+        if (telNumber.matches(telRegex.toRegex())) {
             writeUri(uriMessage)
-        } else{
-            Toast.makeText(activity.applicationContext,
-                "format of telephone is not valid", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(
+                activity.applicationContext,
+                "format of telephone is not valid", Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -190,11 +213,13 @@ class EzNfc(
         textMessage = telNumber
         val uriMessage = "sms:${telNumber}?body=${message}"
         val telRegex = "^[0-9\\-\\+]{9,15}\$"
-        if(telNumber.matches(telRegex.toRegex())) {
+        if (telNumber.matches(telRegex.toRegex())) {
             writeUri(uriMessage)
-        } else{
-            Toast.makeText(activity.applicationContext,
-                "format of telephone is not valid", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(
+                activity.applicationContext,
+                "format of telephone is not valid", Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -212,19 +237,23 @@ class EzNfc(
         intent = intnt
 
         val uriMessage = "geo:${lat},${long}"
-        val latRegex = "^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,6})?))\$"
-        val longRegex = "^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,6})?))\$"
+        val latRegex =
+            "^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,6})?))\$"
+        val longRegex =
+            "^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,6})?))\$"
 
-         if(lat.matches(latRegex.toRegex()) and long.matches(longRegex.toRegex())) {
+        if (lat.matches(latRegex.toRegex()) and long.matches(longRegex.toRegex())) {
             writeUri(uriMessage)
-        } else{
-            Toast.makeText(activity.applicationContext,
-                "format of latitude, or longitude is not valid", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(
+                activity.applicationContext,
+                "format of latitude, or longitude is not valid", Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
 
-    private fun writeUri(uri: String){
+    private fun writeUri(uri: String) {
         try {
             if (NfcAdapter.ACTION_TECH_DISCOVERED == intent.action
                 || NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action
@@ -266,8 +295,8 @@ class EzNfc(
      * function is mandatory, use in fun onPause
      *
      */
-    fun onPause(){
-            nfcAdapter?.disableForegroundDispatch(activity)
+    fun onPause() {
+        nfcAdapter?.disableForegroundDispatch(activity)
     }
 
     /**
@@ -278,7 +307,7 @@ class EzNfc(
      *
      * @return intentFilterArray, for used Activity
      */
-    fun onCreateFilterRead(): Array<IntentFilter>?{
+    fun onCreateFilterRead(): Array<IntentFilter>? {
 
         val ndef = IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED)
         try {
@@ -289,9 +318,9 @@ class EzNfc(
             }
             intentFilterArray = arrayOf(ndef)
             support()
-        }catch (e: Exception){
+        } catch (e: Exception) {
             Log.e("intentfilter", "intent filter is null")
-       }
+        }
         return intentFilterArray
     }
 
@@ -304,15 +333,15 @@ class EzNfc(
      *
      * @return intentFilterArray, for used Activity
      */
-    fun onCreateFilterWrite(): Array<IntentFilter>?{
+    fun onCreateFilterWrite(): Array<IntentFilter>? {
         try {
             intentFilterArray = arrayOf(
                 IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED),
                 IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED),
-            IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED)
+                IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED)
             )
             support()
-        }catch (e: Exception){
+        } catch (e: Exception) {
             Log.e("intentfilter", "intent filter is null")
         }
         return intentFilterArray
@@ -323,10 +352,14 @@ class EzNfc(
      *
      * @param pendingIntent must be created in fun onCreate, FLAG of pendingIntent must be FLAG_ACTIVITY_SINGLE_TOP
      */
-    fun onResume(pendingIntent: PendingIntent?){
-        nfcAdapter?.enableForegroundDispatch(activity, pendingIntent, intentFilterArray, techListArray)
+    fun onResume(pendingIntent: PendingIntent?) {
+        nfcAdapter?.enableForegroundDispatch(
+            activity,
+            pendingIntent,
+            intentFilterArray,
+            techListArray
+        )
     }
-
 
 
     /**
@@ -336,16 +369,20 @@ class EzNfc(
      * Use this function in Activity, that works with NFC
      * Use it in fun OnCreate after initialing IntentFilterArray in try statement
      */
-    private fun support(){
+    private fun support() {
         try {
             if (nfcAdapter == null) {
-                Toast.makeText(activity.applicationContext,
-                    "Does not support NFC", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    activity.applicationContext,
+                    "Does not support NFC", Toast.LENGTH_SHORT
+                ).show()
             } else if (!nfcAdapter!!.isEnabled) {
-                Toast.makeText(activity.applicationContext,
-                    "NFC disabled, please enable NFC reading", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    activity.applicationContext,
+                    "NFC disabled, please enable NFC reading", Toast.LENGTH_SHORT
+                ).show()
             }
-        }catch (e: Exception){
+        } catch (e: Exception) {
             Toast.makeText(activity.applicationContext, e.message, Toast.LENGTH_SHORT).show()
         }
     }
@@ -353,11 +390,11 @@ class EzNfc(
     /**
      * private fun used in public fun WriteText
      */
-    private fun writeTextPrivate(){
+    private fun writeTextPrivate() {
         val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG) ?: return
         val ndef = Ndef.get(tag) ?: return
 
-        if(ndef.isWritable) {
+        if (ndef.isWritable) {
             var message = NdefMessage(
                 arrayOf(
                     NdefRecord.createTextRecord(languageCode, textMessage)
@@ -373,16 +410,16 @@ class EzNfc(
     /**
      * function to check if url is valid
      */
-    private fun checkUrl(): Boolean{
+    private fun checkUrl(): Boolean {
         return URLUtil.isValidUrl(textMessage)
     }
 
     /**
      * private fun used in public fun read
      */
-    private fun readPrivate(){
+    private fun readPrivate() {
         val parcelables = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
-        with(parcelables){
+        with(parcelables) {
             try {
                 val inNdefMessage = this?.get(0) as NdefMessage
                 val inNdefRecord = inNdefMessage.records
@@ -393,8 +430,9 @@ class EzNfc(
 
                 outputMessage = nfcMessage
 
-            } catch (ex: Exception){
-                Toast.makeText(activity.applicationContext, "no data found", Toast.LENGTH_SHORT).show()
+            } catch (ex: Exception) {
+                Toast.makeText(activity.applicationContext, "no data found", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
@@ -402,7 +440,7 @@ class EzNfc(
     /**
      * function to check if data are equal to input data
      */
-    private fun checkWriteText(): Boolean{
+    private fun checkWriteText(): Boolean {
         return outputMessage == textMessage
     }
 
@@ -413,7 +451,7 @@ class EzNfc(
      *
      * @param code insert here string code of language you want to use
      */
-    fun setLanguageCode(code: String){
+    fun setLanguageCode(code: String) {
         languageCode = code
     }
 

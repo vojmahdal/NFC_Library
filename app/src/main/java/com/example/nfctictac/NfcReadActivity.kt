@@ -15,13 +15,13 @@ class NfcReadActivity : AppCompatActivity() {
     private var intentFilterArray: Array<IntentFilter>? = null
     private var pendingIntent: PendingIntent? = null
 
-    private lateinit var textView : TextView
+    private lateinit var textView: TextView
 
     private val nfcAdapter: NfcAdapter? by lazy {
         NfcAdapter.getDefaultAdapter(this)
     }
 
-    private var nfcLib = EzNfc( this, intentFilterArray = intentFilterArray)
+    private var nfcLib = EzNfc(this, intentFilterArray = intentFilterArray)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,28 +30,35 @@ class NfcReadActivity : AppCompatActivity() {
 
         nfcLib.nfcAdapter = nfcAdapter
 
-        if (Build.VERSION.SDK_INT < 30){
-            pendingIntent = PendingIntent.getActivity(this, 0,
-                Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0)}
-        else {
-            pendingIntent = PendingIntent.getActivity(this, 0,
-                Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_MUTABLE)
+        if (Build.VERSION.SDK_INT < 30) {
+            pendingIntent = PendingIntent.getActivity(
+                this, 0,
+                Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0
+            )
+        } else {
+            pendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                PendingIntent.FLAG_MUTABLE
+            )
         }
-            intentFilterArray = nfcLib.onCreateFilterRead()
+        intentFilterArray = nfcLib.onCreateFilterRead()
     }
-        override fun onResume(){
-            super.onResume()
-            nfcLib.onResume(pendingIntent)
-        }
 
-    override fun onNewIntent(intent: Intent){
+    override fun onResume() {
+        super.onResume()
+        nfcLib.onResume(pendingIntent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-          textView.text =  nfcLib.read(intent)
+        textView.text = nfcLib.read(intent)
 
     }
 
     override fun onPause() {
-       nfcLib.onPause()
+        nfcLib.onPause()
         super.onPause()
 
     }
