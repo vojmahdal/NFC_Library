@@ -18,7 +18,7 @@ which are reading from NFC tag, writting text and writting URL.
 ```
 ## add implementation of EzNFC into your build.gradle dependencies.
 ```gradle
-    implementation 'com.github.vojmahdal:Ez_NFC:1.0.1'
+    implementation 'com.github.vojmahdal:Ez_NFC:1.1.2'
 ```
 
 ## Create techlist.xml and add this code:
