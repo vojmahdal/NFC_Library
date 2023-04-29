@@ -50,9 +50,7 @@ class EzNfc(
         intent = intnt
         outputMessage = ""
         val action = intent.action
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED == action ||
-            NfcAdapter.ACTION_TAG_DISCOVERED == action ||
-            NfcAdapter.ACTION_TECH_DISCOVERED == action
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED == action
         ) {
             readPrivate()
         } else {
